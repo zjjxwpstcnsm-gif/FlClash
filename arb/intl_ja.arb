@@ -553,5 +553,17 @@
   "geoSkipped": "{name} はすでに最新です",
   "geoUpdated": "{name} 更新済み",
   "secondsCount": "{count} 秒",
-  "entriesCount": "{count} エントリ"
+  "entriesCount": "{count} エントリ",
+  "smartFailover": "ノードの自動切り替え",
+  "smartFailoverDesc": "5 秒ごとに接続を確認し、香港以外で ChatGPT ドメインに到達できる低遅延ノードを優先します。3 秒でタイムアウトすると切り替え、バックグラウンドでも継続します。ルール／グローバルモードに適用。",
+  "smartFailoverMaxDelay": "使用可能な最大遅延",
+  "smartFailoverMaxDelayDesc": "{limit} ms 以上のノードを除外します。自動切り替えがオンの場合に適用されます。",
+  "smartFailoverLatencyRange": "50〜3000 ms の整数を入力してください。",
+  "@smartFailoverMaxDelayDesc": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -553,5 +553,17 @@
   "geoSkipped": "{name} is already up to date",
   "geoUpdated": "{name} updated",
   "secondsCount": "{count} seconds",
-  "entriesCount": "{count} entries"
+  "entriesCount": "{count} entries",
+  "smartFailover": "Automatic node failover",
+  "smartFailoverDesc": "Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.",
+  "smartFailoverMaxDelay": "Maximum usable latency",
+  "smartFailoverMaxDelayDesc": "Exclude nodes at or above {limit} ms. Applies when automatic failover is on.",
+  "smartFailoverLatencyRange": "Enter a whole number from 50 to 3000 ms.",
+  "@smartFailoverMaxDelayDesc": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  }
 }

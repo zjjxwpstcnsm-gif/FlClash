@@ -553,5 +553,17 @@
   "geoSkipped": "{name} 已是最新版本",
   "geoUpdated": "{name} 已更新",
   "secondsCount": "{count} 秒",
-  "entriesCount": "{count} 个条目"
+  "entriesCount": "{count} 个条目",
+  "smartFailover": "自动切换节点",
+  "smartFailoverDesc": "每 5 秒检测当前节点，优选可连通 ChatGPT 域名的非香港低延迟出口；3 秒超时后自动切换，后台持续运行。作用于规则/全局模式中的代理流量。",
+  "smartFailoverMaxDelay": "最大可用延迟",
+  "smartFailoverMaxDelayDesc": "达到或超过 {limit} ms 的节点视为不可用；开启自动切换后生效。",
+  "smartFailoverLatencyRange": "请输入 50–3000 之间的整数，单位 ms。",
+  "@smartFailoverMaxDelayDesc": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  }
 }

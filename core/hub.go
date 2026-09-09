@@ -50,6 +50,7 @@ func handleStartListener() bool {
 	defer runLock.Unlock()
 	isRunning = true
 	updateListeners()
+	startSmartFailover()
 	resolver.ResetConnection()
 	return true
 }
@@ -58,6 +59,7 @@ func handleStopListener() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
 	isRunning = false
+	stopSmartFailover()
 	listener.StopListener()
 	resolver.ResetConnection()
 	return true
@@ -76,6 +78,10 @@ func handleForceGC() {
 }
 
 func handleShutdown() bool {
+	runLock.Lock()
+	stopSmartFailover()
+	smartGroup = nil
+	runLock.Unlock()
 	stopListeners()
 	executor.Shutdown()
 	handleForceGC()
@@ -138,6 +144,10 @@ func handleChangeProxy(params *ChangeProxyParams, fn func(string string)) {
 		defer runLock.Unlock()
 		groupName := params.GroupName
 		proxyName := params.ProxyName
+		if smartGroup != nil && groupName == "GLOBAL" && proxyName != smartGroupName {
+			fn("global selection is managed by automatic failover")
+			return
+		}
 		proxies := tunnel.AllProxies()
 		group, ok := proxies[groupName]
 		if !ok {

@@ -34,6 +34,16 @@ class _CoreContainerState extends ConsumerState<CoreManager>
   void initState() {
     super.initState();
     coreEventManager.addListener(this);
+    ref.listenManual(
+      appSettingProvider.select(
+        (state) => VM2(state.smartFailover, state.smartFailoverMaxDelayMs),
+      ),
+      (prev, next) {
+        if (prev != next && (prev?.a != next.a || next.a)) {
+          ref.read(setupActionProvider.notifier).fullSetup();
+        }
+      },
+    );
     ref.listenManual(currentProfileIdProvider, (prev, next) {
       if (prev != next) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

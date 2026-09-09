@@ -27,7 +27,13 @@ class SetupAction extends _$SetupAction {
     final testUrl = ref.read(
       appSettingProvider.select((state) => state.testUrl),
     );
-    return SetupParams(selectedMap: selectedMap, testUrl: testUrl);
+    return SetupParams(
+      selectedMap: selectedMap,
+      testUrl: testUrl,
+      smartFailover: ref.read(appSettingProvider).smartFailover,
+      smartFailoverMaxDelayMs:
+          ref.read(appSettingProvider).smartFailoverMaxDelayMs,
+    );
   }
 
   void fullSetup() {

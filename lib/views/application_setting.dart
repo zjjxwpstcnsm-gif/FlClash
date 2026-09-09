@@ -4,6 +4,64 @@ import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+class SmartFailoverItem extends ConsumerWidget {
+  const SmartFailoverItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final enabled = ref.watch(
+      appSettingProvider.select((state) => state.smartFailover),
+    );
+    return ListItem.toggle(
+      leading: const Icon(Icons.sync_alt),
+      title: Text(context.appLocalizations.smartFailover),
+      subtitle: Text(context.appLocalizations.smartFailoverDesc),
+      value: enabled,
+      onChanged: (bool value) {
+        ref.read(appSettingProvider.notifier).update(
+          (state) => state.copyWith(smartFailover: value),
+        );
+      },
+    );
+  }
+}
+
+class SmartFailoverMaxDelayItem extends ConsumerWidget {
+  const SmartFailoverMaxDelayItem({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.appLocalizations;
+    final limit = ref.watch(
+      appSettingProvider.select((state) => state.smartFailoverMaxDelayMs),
+    );
+    return ListItem.input(
+      leading: const Icon(Icons.speed),
+      title: Text(l10n.smartFailoverMaxDelay),
+      subtitle: Text(l10n.smartFailoverMaxDelayDesc(limit)),
+      dialogTitle: l10n.smartFailoverMaxDelay,
+      value: '$limit',
+      suffixText: 'ms',
+      resetValue: '200',
+      maxLength: 4,
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        final parsed = int.tryParse(value?.trim() ?? '');
+        return parsed == null || parsed < 50 || parsed > 3000
+            ? l10n.smartFailoverLatencyRange
+            : null;
+      },
+      onChanged: (value) {
+        final parsed = int.tryParse(value?.trim() ?? '');
+        if (parsed == null || parsed < 50 || parsed > 3000) return;
+        ref.read(appSettingProvider.notifier).update(
+          (state) => state.copyWith(smartFailoverMaxDelayMs: parsed),
+        );
+      },
+    );
+  }
+}
+
 class CloseConnectionsItem extends ConsumerWidget {
   const CloseConnectionsItem({super.key});
 
@@ -252,6 +310,8 @@ class ApplicationSettingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> items = [
+      const SmartFailoverItem(),
+      const SmartFailoverMaxDelayItem(),
       const MinimizeItem(),
       if (system.isDesktop) ...[
         const AutoLaunchItem(),

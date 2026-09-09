@@ -594,7 +594,16 @@ SharedState sharedState(Ref ref) {
     crashlytics: crashlytics,
     stopTip: currentAppLocalizations.stopVpn,
     startTip: currentAppLocalizations.startVpn,
-    setupParams: SetupParams(selectedMap: selectedMap, testUrl: testUrl),
+    setupParams: SetupParams(
+      selectedMap: selectedMap,
+      testUrl: testUrl,
+      smartFailover: ref.watch(
+        appSettingProvider.select((state) => state.smartFailover),
+      ),
+      smartFailoverMaxDelayMs: ref.watch(
+        appSettingProvider.select((state) => state.smartFailoverMaxDelayMs),
+      ),
+    ),
     vpnOptions: VpnOptions(
       enable: vpnSetting.enable,
       stack: stack,

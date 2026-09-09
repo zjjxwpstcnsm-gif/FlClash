@@ -10,6 +10,10 @@ abstract class SetupParams with _$SetupParams {
   const factory SetupParams({
     @JsonKey(name: 'selected-map') required Map<String, String> selectedMap,
     @JsonKey(name: 'test-url') required String testUrl,
+    @JsonKey(name: 'smart-failover') @Default(false) bool smartFailover,
+    @JsonKey(name: 'smart-failover-max-delay')
+    @Default(200)
+    int smartFailoverMaxDelayMs,
   }) = _SetupParams;
 
   factory SetupParams.fromJson(Map<String, dynamic> json) =>

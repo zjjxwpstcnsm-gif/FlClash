@@ -553,5 +553,17 @@
   "geoSkipped": "Для {name} уже установлена последняя версия",
   "geoUpdated": "{name} обновлено",
   "secondsCount": "{count} секунд",
-  "entriesCount": "{count} записей"
+  "entriesCount": "{count} записей",
+  "smartFailover": "Автоматическое переключение узлов",
+  "smartFailoverDesc": "Проверка каждые 5 секунд. Выбор быстрого узла вне Гонконга с доступом к домену ChatGPT. Переключение при тайм-ауте 3 секунды, в том числе в фоне. Для прокси-трафика в режиме правил или глобальном режиме.",
+  "smartFailoverMaxDelay": "Максимальная допустимая задержка",
+  "smartFailoverMaxDelayDesc": "Исключать узлы с задержкой {limit} мс и выше при автоматическом переключении.",
+  "smartFailoverLatencyRange": "Введите целое число от 50 до 3000 мс.",
+  "@smartFailoverMaxDelayDesc": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  }
 }

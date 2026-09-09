@@ -264,14 +264,46 @@ func applyConfig(params *SetupParams) error {
 	runLock.Lock()
 	defer runLock.Unlock()
 	var err error
+	stopSmartFailover()
+	smartGroup = nil
+	smartMaxDelay = params.SmartFailoverMaxDelay
 	constant.DefaultTestURL = params.TestURL
-	currentConfig, err = executor.ParseWithPath(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
+	path := filepath.Join(constant.Path.HomeDir(), "config.yaml")
+	if params.SmartFailover {
+		var data []byte
+		data, err = readFile(path)
+		if err == nil {
+			var raw *config.RawConfig
+			raw, err = config.UnmarshalRawConfig(data)
+			if err == nil {
+				err = addSmartFailover(raw)
+			}
+			if err == nil {
+				currentConfig, err = config.ParseRawConfig(raw)
+			}
+			if err == nil {
+				installSmartFailover(currentConfig)
+			}
+		}
+	} else {
+		currentConfig, err = executor.ParseWithPath(path)
+	}
 	if err != nil {
-		currentConfig, _ = config.ParseRawConfig(config.DefaultRawConfig())
+		raw := config.DefaultRawConfig()
+		if params.SmartFailover {
+			_ = addSmartFailover(raw)
+			raw.Rule = []string{"MATCH," + smartGroupName}
+		}
+		currentConfig, _ = config.ParseRawConfig(raw)
+		if params.SmartFailover {
+			installSmartFailover(currentConfig)
+		}
 	}
 	hub.ApplyConfig(currentConfig)
 	patchSelectGroup(params.SelectedMap)
+	selectSmartGlobal()
 	updateListeners()
+	startSmartFailover()
 	if updater.GeoAutoUpdate() {
 		updater.RegisterGeoUpdaterWithCancel()
 	}

@@ -19,4 +19,8 @@ data class SetupParams(
     val testUrl: String,
     @SerializedName("selected-map")
     val selectedMap: Map<String, String>,
+    @SerializedName("smart-failover")
+    val smartFailover: Boolean = false,
+    @SerializedName("smart-failover-max-delay")
+    val smartFailoverMaxDelayMs: Int = 200,
 )

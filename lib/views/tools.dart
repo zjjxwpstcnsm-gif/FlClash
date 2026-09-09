@@ -70,6 +70,8 @@ class _ToolViewState extends ConsumerState<ToolsView> {
     return generateSection(
       title: context.appLocalizations.settings,
       items: [
+        const SmartFailoverItem(),
+        const SmartFailoverMaxDelayItem(),
         const _LocaleItem(),
         const _ThemeItem(),
         const _BackupItem(),
