@@ -40,6 +40,7 @@ jobs:
           cache: true
 
       - uses: nttld/setup-ndk@v1
+        id: ndk
         with:
           ndk-version: r28c
           add-to-path: true
@@ -75,6 +76,8 @@ jobs:
           fi
 
       - name: Build Android APKs
+        env:
+          ANDROID_NDK: ${{ steps.ndk.outputs.ndk-path }}
         run: |
           flutter build apk --release --split-per-abi --target-platform android-arm64,android-arm --build-name 0.8.96-auto.1 --build-number $((2026090900 + GITHUB_RUN_NUMBER))
 
