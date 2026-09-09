@@ -403,6 +403,12 @@ Map<String, String> selectedMap(Ref ref) {
   final selectedMap = ref.watch(
     currentProfileProvider.select((state) => state?.selectedMap ?? {}),
   );
+  final smartFailover = ref.watch(
+    appSettingProvider.select((state) => state.smartFailover),
+  );
+  if (smartFailover) {
+    return {...selectedMap, 'GLOBAL': 'FlClash Auto (non-HK)'};
+  }
   return selectedMap;
 }
 

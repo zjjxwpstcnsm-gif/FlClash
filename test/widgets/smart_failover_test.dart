@@ -6,6 +6,7 @@ import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/providers/state.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/application_setting.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,32 @@ void main() {
     expect(SetupParams.fromJson(params.toJson()).smartFailover, isTrue);
     expect(params.toJson()['smart-failover-max-delay'], 350);
     expect(SetupParams.fromJson(params.toJson()).smartFailoverMaxDelayMs, 350);
+  });
+
+  test('global selection follows failover and restores the saved node', () {
+    const profile = Profile(
+      id: 1,
+      autoUpdateDuration: Duration(days: 1),
+      selectedMap: {'GLOBAL': 'Hong Kong 01', 'Proxy': 'Japan 01'},
+    );
+    final container = ProviderContainer(
+      overrides: [currentProfileProvider.overrideWithValue(profile)],
+    );
+    addTearDown(container.dispose);
+    expect(container.read(selectedMapProvider), profile.selectedMap);
+    container.read(appSettingProvider.notifier).update(
+      (state) => state.copyWith(smartFailover: true),
+    );
+    expect(
+      container.read(selectedMapProvider)['GLOBAL'],
+      'FlClash Auto (non-HK)',
+    );
+    expect(container.read(selectedMapProvider)['Proxy'], 'Japan 01');
+    expect(container.read(currentProfileProvider)?.selectedMap, profile.selectedMap);
+    container.read(appSettingProvider.notifier).update(
+      (state) => state.copyWith(smartFailover: false),
+    );
+    expect(container.read(selectedMapProvider), profile.selectedMap);
   });
 
   testWidgets('one switch enables and disables automatic failover', (
