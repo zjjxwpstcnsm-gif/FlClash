@@ -18,9 +18,9 @@ class SmartFailoverItem extends ConsumerWidget {
       subtitle: Text(context.appLocalizations.smartFailoverDesc),
       value: enabled,
       onChanged: (bool value) {
-        ref.read(appSettingProvider.notifier).update(
-          (state) => state.copyWith(smartFailover: value),
-        );
+        ref
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(smartFailover: value));
       },
     );
   }
@@ -54,9 +54,9 @@ class SmartFailoverMaxDelayItem extends ConsumerWidget {
       onChanged: (value) {
         final parsed = int.tryParse(value?.trim() ?? '');
         if (parsed == null || parsed < 50 || parsed > 3000) return;
-        ref.read(appSettingProvider.notifier).update(
-          (state) => state.copyWith(smartFailoverMaxDelayMs: parsed),
-        );
+        ref
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(smartFailoverMaxDelayMs: parsed));
       },
     );
   }

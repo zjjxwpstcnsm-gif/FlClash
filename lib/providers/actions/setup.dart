@@ -31,8 +31,9 @@ class SetupAction extends _$SetupAction {
       selectedMap: selectedMap,
       testUrl: testUrl,
       smartFailover: ref.read(appSettingProvider).smartFailover,
-      smartFailoverMaxDelayMs:
-          ref.read(appSettingProvider).smartFailoverMaxDelayMs,
+      smartFailoverMaxDelayMs: ref
+          .read(appSettingProvider)
+          .smartFailoverMaxDelayMs,
     );
   }
 

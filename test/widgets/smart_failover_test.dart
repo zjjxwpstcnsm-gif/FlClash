@@ -38,14 +38,13 @@ void main() {
     expect(SetupParams.fromJson(params.toJson()).smartFailoverMaxDelayMs, 350);
   });
 
-  testWidgets('one switch enables and disables automatic failover', (tester) async {
+  testWidgets('one switch enables and disables automatic failover', (
+    tester,
+  ) async {
     final container = _container();
     addTearDown(container.dispose);
     await tester.pumpWidget(
-      _TestApp(
-        container: container,
-        child: const SmartFailoverItem(),
-      ),
+      _TestApp(container: container, child: const SmartFailoverItem()),
     );
     await tester.pumpAndSettle();
     expect(find.text('Automatic node failover'), findsOneWidget);
@@ -64,10 +63,7 @@ void main() {
     final container = _container();
     addTearDown(container.dispose);
     await tester.pumpWidget(
-      _TestApp(
-        container: container,
-        child: const SmartFailoverMaxDelayItem(),
-      ),
+      _TestApp(container: container, child: const SmartFailoverMaxDelayItem()),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Maximum usable latency'));

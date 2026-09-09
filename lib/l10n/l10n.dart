@@ -4523,6 +4523,56 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Automatic node failover`
+  String get smartFailover {
+    return Intl.message(
+      'Automatic node failover',
+      name: 'smartFailover',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.`
+  String get smartFailoverDesc {
+    return Intl.message(
+      'Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.',
+      name: 'smartFailoverDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Maximum usable latency`
+  String get smartFailoverMaxDelay {
+    return Intl.message(
+      'Maximum usable latency',
+      name: 'smartFailoverMaxDelay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exclude nodes at or above {limit} ms. Applies when automatic failover is on.`
+  String smartFailoverMaxDelayDesc(int limit) {
+    return Intl.message(
+      'Exclude nodes at or above $limit ms. Applies when automatic failover is on.',
+      name: 'smartFailoverMaxDelayDesc',
+      desc: '',
+      args: [limit],
+    );
+  }
+
+  /// `Enter a whole number from 50 to 3000 ms.`
+  String get smartFailoverLatencyRange {
+    return Intl.message(
+      'Enter a whole number from 50 to 3000 ms.',
+      name: 'smartFailoverLatencyRange',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

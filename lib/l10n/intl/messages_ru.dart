@@ -75,9 +75,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "Выбрано ${count} элементов";
 
-  static String m24(label) => "${label} должен быть URL";
+  static String m24(limit) =>
+      "Исключать узлы с задержкой ${limit} мс и выше при автоматическом переключении.";
 
-  static String m25(count) =>
+  static String m25(label) => "${label} должен быть URL";
+
+  static String m26(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -994,6 +997,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Запуск в фоновом режиме",
     ),
     "size": MessageLookupByLibrary.simpleMessage("Размер"),
+    "smartFailover": MessageLookupByLibrary.simpleMessage(
+      "Автоматическое переключение узлов",
+    ),
+    "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
+      "Проверка каждые 5 секунд. Выбор быстрого узла вне Гонконга с доступом к домену ChatGPT. Переключение при тайм-ауте 3 секунды, в том числе в фоне. Для прокси-трафика в режиме правил или глобальном режиме.",
+    ),
+    "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
+      "Введите целое число от 50 до 3000 мс.",
+    ),
+    "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage(
+      "Максимальная допустимая задержка",
+    ),
+    "smartFailoverMaxDelayDesc": m24,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks-порт"),
     "sort": MessageLookupByLibrary.simpleMessage("Сортировка"),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
@@ -1099,7 +1115,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Получить профиль через URL",
     ),
-    "urlTip": m24,
+    "urlTip": m25,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
@@ -1123,7 +1139,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "whitelistMode": MessageLookupByLibrary.simpleMessage(
       "Режим белого списка",
     ),
-    "yearsAgo": m25,
+    "yearsAgo": m26,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
   };
 }

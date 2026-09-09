@@ -69,9 +69,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "已选择 ${count} 项";
 
-  static String m24(label) => "${label}必须为URL";
+  static String m24(limit) => "达到或超过 ${limit} ms 的节点视为不可用；开启自动切换后生效。";
 
-  static String m25(count) => "${count} 年前";
+  static String m25(label) => "${label}必须为URL";
+
+  static String m26(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -661,6 +663,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "silentLaunch": MessageLookupByLibrary.simpleMessage("静默启动"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("后台启动"),
     "size": MessageLookupByLibrary.simpleMessage("尺寸"),
+    "smartFailover": MessageLookupByLibrary.simpleMessage("自动切换节点"),
+    "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
+      "每 5 秒检测当前节点，优选可连通 ChatGPT 域名的非香港低延迟出口；3 秒超时后自动切换，后台持续运行。作用于规则/全局模式中的代理流量。",
+    ),
+    "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
+      "请输入 50–3000 之间的整数，单位 ms。",
+    ),
+    "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage("最大可用延迟"),
+    "smartFailoverMaxDelayDesc": m24,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks端口"),
     "sort": MessageLookupByLibrary.simpleMessage("排序"),
     "source": MessageLookupByLibrary.simpleMessage("来源"),
@@ -730,7 +741,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("通过URL获取配置文件"),
-    "urlTip": m24,
+    "urlTip": m25,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("用户代理"),
@@ -746,7 +757,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("重启VPN后改变生效"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
-    "yearsAgo": m25,
+    "yearsAgo": m26,
     "zh_CN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };
 }

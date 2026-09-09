@@ -76,9 +76,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "${count} items have been selected";
 
-  static String m24(label) => "${label} must be a url";
+  static String m24(limit) =>
+      "Exclude nodes at or above ${limit} ms. Applies when automatic failover is on.";
 
-  static String m25(count) =>
+  static String m25(label) => "${label} must be a url";
+
+  static String m26(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -947,6 +950,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start in the background",
     ),
     "size": MessageLookupByLibrary.simpleMessage("Size"),
+    "smartFailover": MessageLookupByLibrary.simpleMessage(
+      "Automatic node failover",
+    ),
+    "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
+      "Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.",
+    ),
+    "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
+      "Enter a whole number from 50 to 3000 ms.",
+    ),
+    "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage(
+      "Maximum usable latency",
+    ),
+    "smartFailoverMaxDelayDesc": m24,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks Port"),
     "sort": MessageLookupByLibrary.simpleMessage("Sort"),
     "source": MessageLookupByLibrary.simpleMessage("Source"),
@@ -1038,7 +1054,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m24,
+    "urlTip": m25,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
@@ -1058,7 +1074,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m25,
+    "yearsAgo": m26,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }

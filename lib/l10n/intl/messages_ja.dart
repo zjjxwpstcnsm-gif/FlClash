@@ -69,9 +69,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "${count} 項目が選択されています";
 
-  static String m24(label) => "${label}はURLである必要があります";
+  static String m24(limit) => "${limit} ms 以上のノードを除外します。自動切り替えがオンの場合に適用されます。";
 
-  static String m25(count) => "${count}年前";
+  static String m25(label) => "${label}はURLである必要があります";
+
+  static String m26(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -767,6 +769,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "silentLaunch": MessageLookupByLibrary.simpleMessage("バックグラウンド起動"),
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("バックグラウンドで起動"),
     "size": MessageLookupByLibrary.simpleMessage("サイズ"),
+    "smartFailover": MessageLookupByLibrary.simpleMessage("ノードの自動切り替え"),
+    "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
+      "5 秒ごとに接続を確認し、香港以外で ChatGPT ドメインに到達できる低遅延ノードを優先します。3 秒でタイムアウトすると切り替え、バックグラウンドでも継続します。ルール／グローバルモードに適用。",
+    ),
+    "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
+      "50〜3000 ms の整数を入力してください。",
+    ),
+    "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage("使用可能な最大遅延"),
+    "smartFailoverMaxDelayDesc": m24,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socksポート"),
     "sort": MessageLookupByLibrary.simpleMessage("並び替え"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
@@ -842,7 +853,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m24,
+    "urlTip": m25,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "userAgent": MessageLookupByLibrary.simpleMessage("ユーザーエージェント"),
@@ -858,7 +869,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m25,
+    "yearsAgo": m26,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }

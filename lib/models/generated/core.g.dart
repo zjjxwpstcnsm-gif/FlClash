@@ -9,12 +9,17 @@ part of '../core.dart';
 _SetupParams _$SetupParamsFromJson(Map<String, dynamic> json) => _SetupParams(
   selectedMap: Map<String, String>.from(json['selected-map'] as Map),
   testUrl: json['test-url'] as String,
+  smartFailover: json['smart-failover'] as bool? ?? false,
+  smartFailoverMaxDelayMs:
+      (json['smart-failover-max-delay'] as num?)?.toInt() ?? 200,
 );
 
 Map<String, dynamic> _$SetupParamsToJson(_SetupParams instance) =>
     <String, dynamic>{
       'selected-map': instance.selectedMap,
       'test-url': instance.testUrl,
+      'smart-failover': instance.smartFailover,
+      'smart-failover-max-delay': instance.smartFailoverMaxDelayMs,
     };
 
 _UpdateParams _$UpdateParamsFromJson(Map<String, dynamic> json) =>

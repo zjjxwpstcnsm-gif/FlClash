@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SetupParams {
 
-@JsonKey(name: 'selected-map') Map<String, String> get selectedMap;@JsonKey(name: 'test-url') String get testUrl;
+@JsonKey(name: 'selected-map') Map<String, String> get selectedMap;@JsonKey(name: 'test-url') String get testUrl;@JsonKey(name: 'smart-failover') bool get smartFailover;@JsonKey(name: 'smart-failover-max-delay') int get smartFailoverMaxDelayMs;
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SetupParamsCopyWith<SetupParams> get copyWith => _$SetupParamsCopyWithImpl<Setu
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetupParams&&const DeepCollectionEquality().equals(other.selectedMap, selectedMap)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetupParams&&const DeepCollectionEquality().equals(other.selectedMap, selectedMap)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl)&&(identical(other.smartFailover, smartFailover) || other.smartFailover == smartFailover)&&(identical(other.smartFailoverMaxDelayMs, smartFailoverMaxDelayMs) || other.smartFailoverMaxDelayMs == smartFailoverMaxDelayMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(selectedMap),testUrl);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(selectedMap),testUrl,smartFailover,smartFailoverMaxDelayMs);
 
 @override
 String toString() {
-  return 'SetupParams(selectedMap: $selectedMap, testUrl: $testUrl)';
+  return 'SetupParams(selectedMap: $selectedMap, testUrl: $testUrl, smartFailover: $smartFailover, smartFailoverMaxDelayMs: $smartFailoverMaxDelayMs)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SetupParamsCopyWith<$Res>  {
   factory $SetupParamsCopyWith(SetupParams value, $Res Function(SetupParams) _then) = _$SetupParamsCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl
+@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl,@JsonKey(name: 'smart-failover') bool smartFailover,@JsonKey(name: 'smart-failover-max-delay') int smartFailoverMaxDelayMs
 });
 
 
@@ -65,11 +65,13 @@ class _$SetupParamsCopyWithImpl<$Res>
 
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedMap = null,Object? testUrl = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedMap = null,Object? testUrl = null,Object? smartFailover = null,Object? smartFailoverMaxDelayMs = null,}) {
   return _then(_self.copyWith(
 selectedMap: null == selectedMap ? _self.selectedMap : selectedMap // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,testUrl: null == testUrl ? _self.testUrl : testUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,smartFailover: null == smartFailover ? _self.smartFailover : smartFailover // ignore: cast_nullable_to_non_nullable
+as bool,smartFailoverMaxDelayMs: null == smartFailoverMaxDelayMs ? _self.smartFailoverMaxDelayMs : smartFailoverMaxDelayMs // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -154,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl, @JsonKey(name: 'smart-failover')  bool smartFailover, @JsonKey(name: 'smart-failover-max-delay')  int smartFailoverMaxDelayMs)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SetupParams() when $default != null:
-return $default(_that.selectedMap,_that.testUrl);case _:
+return $default(_that.selectedMap,_that.testUrl,_that.smartFailover,_that.smartFailoverMaxDelayMs);case _:
   return orElse();
 
 }
@@ -175,10 +177,10 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl, @JsonKey(name: 'smart-failover')  bool smartFailover, @JsonKey(name: 'smart-failover-max-delay')  int smartFailoverMaxDelayMs)  $default,) {final _that = this;
 switch (_that) {
 case _SetupParams():
-return $default(_that.selectedMap,_that.testUrl);case _:
+return $default(_that.selectedMap,_that.testUrl,_that.smartFailover,_that.smartFailoverMaxDelayMs);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +197,10 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'selected-map')  Map<String, String> selectedMap, @JsonKey(name: 'test-url')  String testUrl, @JsonKey(name: 'smart-failover')  bool smartFailover, @JsonKey(name: 'smart-failover-max-delay')  int smartFailoverMaxDelayMs)?  $default,) {final _that = this;
 switch (_that) {
 case _SetupParams() when $default != null:
-return $default(_that.selectedMap,_that.testUrl);case _:
+return $default(_that.selectedMap,_that.testUrl,_that.smartFailover,_that.smartFailoverMaxDelayMs);case _:
   return null;
 
 }
@@ -210,7 +212,7 @@ return $default(_that.selectedMap,_that.testUrl);case _:
 @JsonSerializable()
 
 class _SetupParams implements SetupParams {
-  const _SetupParams({@JsonKey(name: 'selected-map') required final  Map<String, String> selectedMap, @JsonKey(name: 'test-url') required this.testUrl}): _selectedMap = selectedMap;
+  const _SetupParams({@JsonKey(name: 'selected-map') required final  Map<String, String> selectedMap, @JsonKey(name: 'test-url') required this.testUrl, @JsonKey(name: 'smart-failover') this.smartFailover = false, @JsonKey(name: 'smart-failover-max-delay') this.smartFailoverMaxDelayMs = 200}): _selectedMap = selectedMap;
   factory _SetupParams.fromJson(Map<String, dynamic> json) => _$SetupParamsFromJson(json);
 
  final  Map<String, String> _selectedMap;
@@ -221,6 +223,8 @@ class _SetupParams implements SetupParams {
 }
 
 @override@JsonKey(name: 'test-url') final  String testUrl;
+@override@JsonKey(name: 'smart-failover') final  bool smartFailover;
+@override@JsonKey(name: 'smart-failover-max-delay') final  int smartFailoverMaxDelayMs;
 
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetupParams&&const DeepCollectionEquality().equals(other._selectedMap, _selectedMap)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SetupParams&&const DeepCollectionEquality().equals(other._selectedMap, _selectedMap)&&(identical(other.testUrl, testUrl) || other.testUrl == testUrl)&&(identical(other.smartFailover, smartFailover) || other.smartFailover == smartFailover)&&(identical(other.smartFailoverMaxDelayMs, smartFailoverMaxDelayMs) || other.smartFailoverMaxDelayMs == smartFailoverMaxDelayMs));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedMap),testUrl);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_selectedMap),testUrl,smartFailover,smartFailoverMaxDelayMs);
 
 @override
 String toString() {
-  return 'SetupParams(selectedMap: $selectedMap, testUrl: $testUrl)';
+  return 'SetupParams(selectedMap: $selectedMap, testUrl: $testUrl, smartFailover: $smartFailover, smartFailoverMaxDelayMs: $smartFailoverMaxDelayMs)';
 }
 
 
@@ -255,7 +259,7 @@ abstract mixin class _$SetupParamsCopyWith<$Res> implements $SetupParamsCopyWith
   factory _$SetupParamsCopyWith(_SetupParams value, $Res Function(_SetupParams) _then) = __$SetupParamsCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl
+@JsonKey(name: 'selected-map') Map<String, String> selectedMap,@JsonKey(name: 'test-url') String testUrl,@JsonKey(name: 'smart-failover') bool smartFailover,@JsonKey(name: 'smart-failover-max-delay') int smartFailoverMaxDelayMs
 });
 
 
@@ -272,11 +276,13 @@ class __$SetupParamsCopyWithImpl<$Res>
 
 /// Create a copy of SetupParams
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedMap = null,Object? testUrl = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedMap = null,Object? testUrl = null,Object? smartFailover = null,Object? smartFailoverMaxDelayMs = null,}) {
   return _then(_SetupParams(
 selectedMap: null == selectedMap ? _self._selectedMap : selectedMap // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,testUrl: null == testUrl ? _self.testUrl : testUrl // ignore: cast_nullable_to_non_nullable
-as String,
+as String,smartFailover: null == smartFailover ? _self.smartFailover : smartFailover // ignore: cast_nullable_to_non_nullable
+as bool,smartFailoverMaxDelayMs: null == smartFailoverMaxDelayMs ? _self.smartFailoverMaxDelayMs : smartFailoverMaxDelayMs // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
