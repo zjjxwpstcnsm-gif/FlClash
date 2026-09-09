@@ -61,6 +61,15 @@ jobs:
       - name: Test core routing and failover
         working-directory: core
         run: |
+          for attempt in 1 2 3; do
+            if GODEBUG=http2client=0 go mod download; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep 3
+          done
           CGO_ENABLED=0 go test . ./failover
           CGO_ENABLED=0 go vet . ./failover
           go test -race ./failover
