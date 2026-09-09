@@ -50,18 +50,21 @@ void main() {
     );
     addTearDown(container.dispose);
     expect(container.read(selectedMapProvider), profile.selectedMap);
-    container.read(appSettingProvider.notifier).update(
-      (state) => state.copyWith(smartFailover: true),
-    );
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: true));
     expect(
       container.read(selectedMapProvider)['GLOBAL'],
       'FlClash Auto (non-HK)',
     );
     expect(container.read(selectedMapProvider)['Proxy'], 'Japan 01');
-    expect(container.read(currentProfileProvider)?.selectedMap, profile.selectedMap);
-    container.read(appSettingProvider.notifier).update(
-      (state) => state.copyWith(smartFailover: false),
+    expect(
+      container.read(currentProfileProvider)?.selectedMap,
+      profile.selectedMap,
     );
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: false));
     expect(container.read(selectedMapProvider), profile.selectedMap);
   });
 
