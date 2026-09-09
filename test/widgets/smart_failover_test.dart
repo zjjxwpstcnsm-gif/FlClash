@@ -1,8 +1,12 @@
 import 'dart:convert';
 
+import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/theme.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/providers/app.dart';
 import 'package:fl_clash/providers/config.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/views/application_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -35,21 +39,12 @@ void main() {
   });
 
   testWidgets('one switch enables and disables automatic failover', (tester) async {
-    final container = ProviderContainer();
+    final container = _container();
     addTearDown(container.dispose);
     await tester.pumpWidget(
-      UncontrolledProviderScope(
+      _TestApp(
         container: container,
-        child: const MaterialApp(
-          locale: Locale('en'),
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          home: Scaffold(body: SmartFailoverItem()),
-        ),
+        child: const SmartFailoverItem(),
       ),
     );
     await tester.pumpAndSettle();
@@ -62,4 +57,67 @@ void main() {
     await tester.pumpAndSettle();
     expect(container.read(appSettingProvider).smartFailover, isFalse);
   });
+
+  testWidgets('latency setting validates and saves the entered limit', (
+    tester,
+  ) async {
+    final container = _container();
+    addTearDown(container.dispose);
+    await tester.pumpWidget(
+      _TestApp(
+        container: container,
+        child: const SmartFailoverMaxDelayItem(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Maximum usable latency'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), '0');
+    await tester.tap(find.text('Submit'));
+    await tester.pumpAndSettle();
+    expect(container.read(appSettingProvider).smartFailoverMaxDelayMs, 200);
+    expect(find.byType(TextFormField), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField), '350');
+    await tester.tap(find.text('Submit'));
+    await tester.pumpAndSettle();
+    expect(container.read(appSettingProvider).smartFailoverMaxDelayMs, 350);
+    expect(find.byType(TextFormField), findsNothing);
+    expect(find.textContaining('350 ms'), findsOneWidget);
+  });
+}
+
+ProviderContainer _container() => ProviderContainer(
+  overrides: [
+    viewSizeProvider.overrideWithBuild((_, _) => const Size(1200, 1000)),
+  ],
+);
+
+class _TestApp extends StatelessWidget {
+  const _TestApp({required this.container, required this.child});
+
+  final ProviderContainer container;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        navigatorKey: globalState.navigatorKey,
+        locale: const Locale('en'),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        builder: (context, child) {
+          globalState.measure = Measure.of(context, 1);
+          globalState.theme = CommonTheme.of(context, 1);
+          return child!;
+        },
+        home: Scaffold(body: child),
+      ),
+    );
+  }
 }

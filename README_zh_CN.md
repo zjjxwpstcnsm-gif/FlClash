@@ -1,3 +1,11 @@
+## FlClash Auto 安卓版
+
+本 fork 新增后台自动切换：排除香港节点，在通过检测的节点中选择低延迟节点。「工具 → 设置」提供开关和最大可用延迟，默认 200 ms；超时或达到阈值即触发切换。
+
+[下载安卓 APK](https://github.com/zjjxwpstcnsm-gif/FlClash/releases) · [使用说明与构建细节](AUTO_FAILOVER.md)
+
+基于 FlClash，保留 GPL-3.0 许可证。以下为上游项目信息。
+
 <div>
 
 [**English**](README.md)

@@ -1,3 +1,11 @@
+## FlClash Auto for Android
+
+This fork adds background failover to the fastest verified non-Hong Kong node, with a settings switch and a configurable latency limit (default: 200 ms). Timeouts and latency at or above the limit trigger failover.
+
+[Download Android APKs](https://github.com/zjjxwpstcnsm-gif/FlClash/releases) · [使用说明 / behavior and build details](AUTO_FAILOVER.md)
+
+Based on FlClash under GPL-3.0. The upstream project information follows.
+
 <div>
 
 [**简体中文**](README_zh_CN.md)

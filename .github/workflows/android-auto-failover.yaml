@@ -81,6 +81,12 @@ jobs:
       - name: Prepare downloads
         run: |
           mkdir -p dist
+          for abi in arm64-v8a armeabi-v7a; do
+            apk="build/app/outputs/flutter-apk/app-${abi}-release.apk"
+            unzip -p "$apk" "lib/${abi}/libclash.so" > "$RUNNER_TEMP/libclash-${abi}.so"
+            test -s "$RUNNER_TEMP/libclash-${abi}.so"
+            go version -m "$RUNNER_TEMP/libclash-${abi}.so"
+          done
           cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk dist/FlClash-Auto-arm64-v8a.apk
           cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk dist/FlClash-Auto-armeabi-v7a.apk
           cp AUTO_FAILOVER.md dist/README.md

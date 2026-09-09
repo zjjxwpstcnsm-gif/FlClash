@@ -237,7 +237,7 @@ func startSmartFailover() {
 				if err == nil {
 					value = int32(max(1, delay.Milliseconds()))
 				}
-				if ctx.Err() == nil {
+				if !errors.Is(ctx.Err(), context.Canceled) {
 					sendMessage(Message{Type: DelayMessage, Data: &Delay{Name: name, Url: smartProbeURL, Value: value}})
 				}
 				return delay, err
