@@ -79,6 +79,10 @@ class _CoreContainerState extends ConsumerState<CoreManager>
     super.onDelay(delay);
     final proxiesAction = ref.read(proxiesActionProvider.notifier);
     proxiesAction.setDelay(delay);
+    if (delay.name == 'FlClash Auto (non-HK)') {
+      proxiesAction.updateGroupsDebounce(const Duration(milliseconds: 100));
+      return;
+    }
     debouncer.call(FunctionTag.updateDelay, () async {
       proxiesAction.updateGroupsDebounce();
     }, duration: const Duration(milliseconds: 5000));

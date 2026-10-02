@@ -33,6 +33,8 @@ mixin CoreInterface {
 
   Future<ProxiesData> getProxies();
 
+  Future<Map<String, dynamic>> getSmartFailoverStatus({bool recheck = false});
+
   Future<String> changeProxy(ChangeProxyParams changeProxyParams);
 
   Future<bool> startListener();
@@ -80,6 +82,18 @@ mixin CoreInterface {
 }
 
 abstract class CoreHandlerInterface with CoreInterface {
+  @override
+  Future<Map<String, dynamic>> getSmartFailoverStatus({
+    bool recheck = false,
+  }) async {
+    final result = await _invokeMethod<Map>(
+      method: CoreMethod.getSmartFailoverStatus,
+      arguments: recheck,
+      timeout: const Duration(seconds: 5),
+    );
+    return Map<String, dynamic>.from(result ?? {});
+  }
+
   Future<T?> _invokeMethod<T>({
     required CoreMethod method,
     Object? arguments,

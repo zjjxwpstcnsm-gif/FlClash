@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/core/core.dart';
 import 'package:fl_clash/providers/config.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +61,141 @@ class SmartFailoverMaxDelayItem extends ConsumerWidget {
             .read(appSettingProvider.notifier)
             .update((state) => state.copyWith(smartFailoverMaxDelayMs: parsed));
       },
+    );
+  }
+}
+
+class SmartFailoverStatusItem extends ConsumerStatefulWidget {
+  const SmartFailoverStatusItem({super.key, this.controller});
+
+  final CoreController? controller;
+
+  @override
+  ConsumerState<SmartFailoverStatusItem> createState() =>
+      _SmartFailoverStatusItemState();
+}
+
+class _SmartFailoverStatusItemState
+    extends ConsumerState<SmartFailoverStatusItem> {
+  Timer? _timer;
+  Map<String, dynamic> _status = {};
+  bool _busy = false;
+  bool _failed = false;
+  int _revision = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    ref.listenManual(
+      appSettingProvider.select((state) => state.smartFailover),
+      (_, enabled) {
+        _revision++;
+        _timer?.cancel();
+        _timer = null;
+        _busy = false;
+        _status = {};
+        if (enabled) {
+          unawaited(_poll());
+          _timer = Timer.periodic(
+            const Duration(seconds: 2),
+            (_) => unawaited(_poll()),
+          );
+        }
+      },
+      fireImmediately: true,
+    );
+  }
+
+  Future<void> _poll({bool recheck = false}) async {
+    if (_busy) return;
+    final revision = _revision;
+    setState(() => _busy = true);
+    try {
+      final status = await (widget.controller ?? coreController)
+          .getSmartFailoverStatus(recheck: recheck);
+      if (!mounted || revision != _revision) return;
+      setState(() {
+        _status = status;
+        _failed = false;
+      });
+    } catch (_) {
+      if (mounted && revision == _revision) {
+        setState(() => _failed = true);
+      }
+    } finally {
+      if (mounted && revision == _revision) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = ref.watch(
+      appSettingProvider.select((state) => state.smartFailover),
+    );
+    if (!enabled) return const SizedBox.shrink();
+    final l10n = context.appLocalizations;
+    final count = (_status['candidateCount'] as num?)?.toInt() ?? 0;
+    final limit = ref.watch(appSettingProvider).smartFailoverMaxDelayMs;
+    final ready = _status['state'] == 'ready';
+    final direct = _status['mode']?.toString().toLowerCase() == 'direct';
+    final message = _failed
+        ? l10n.smartFailoverStatusError
+        : direct && _status['running'] == true
+        ? l10n.smartFailoverDirect
+        : switch (_status['state']) {
+            'ready' => l10n.smartFailoverReady(
+              _status['current'] as String? ?? '',
+              (_status['delayMs'] as num?)?.toInt() ?? 0,
+            ),
+            'stopped' => l10n.smartFailoverStopped,
+            'empty' => l10n.smartFailoverEmpty,
+            'unavailable' => l10n.smartFailoverUnavailable(count, limit),
+            _ => l10n.smartFailoverChecking(count),
+          };
+    final results = (_status['results'] as Map?) ?? {};
+    final reasons = results.values.whereType<Map>().map(
+      (result) => result['reason']?.toString() ?? '',
+    );
+    final refused = reasons.where(
+      (reason) => reason.startsWith('service_refused:'),
+    );
+    final codes = refused.map((reason) => reason.split(':').last).toSet();
+    return ListItem(
+      leading: Icon(ready && !direct ? Icons.verified : Icons.network_check),
+      title: Text(l10n.smartFailoverStatus),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(message),
+          if (results.isNotEmpty)
+            Text(
+              l10n.smartFailoverDiagnostics(
+                results.length,
+                reasons.where((reason) => reason == 'latency_limit').length,
+                refused.length,
+                reasons.where((reason) => reason.contains('deadline')).length,
+                reasons.where((reason) => reason == 'exit_region').length,
+              ),
+            ),
+          if (codes.isNotEmpty)
+            Text(l10n.smartFailoverRefusedCodes(codes.join(', '))),
+        ],
+      ),
+      trailing: IconButton(
+        tooltip: l10n.smartFailoverCheckNow,
+        onPressed: _busy || _status['running'] != true
+            ? null
+            : () => unawaited(_poll(recheck: true)),
+        icon: const Icon(Icons.refresh),
+      ),
     );
   }
 }
@@ -312,6 +450,7 @@ class ApplicationSettingView extends StatelessWidget {
     final List<Widget> items = [
       const SmartFailoverItem(),
       const SmartFailoverMaxDelayItem(),
+      const SmartFailoverStatusItem(),
       const MinimizeItem(),
       if (system.isDesktop) ...[
         const AutoLaunchItem(),

@@ -555,7 +555,7 @@
   "secondsCount": "{count} 秒",
   "entriesCount": "{count} 个条目",
   "smartFailover": "自动切换节点",
-  "smartFailoverDesc": "每 5 秒检测当前节点，优选可连通 ChatGPT 域名的非香港低延迟出口；3 秒超时后自动切换，后台持续运行。作用于规则/全局模式中的代理流量。",
+  "smartFailoverDesc": "每 5 秒检测当前非香港节点，失效后自动切换；延迟阈值不包含首次拨号和 TLS 握手，单次探测最多 5 秒。核心后台运行，作用于规则/全局模式的代理流量。",
   "smartFailoverMaxDelay": "最大可用延迟",
   "smartFailoverMaxDelayDesc": "达到或超过 {limit} ms 的节点视为不可用；开启自动切换后生效。",
   "smartFailoverLatencyRange": "请输入 50–3000 之间的整数，单位 ms。",
@@ -563,6 +563,70 @@
     "placeholders": {
       "limit": {
         "type": "int"
+      }
+    }
+  },
+  "smartFailoverStatus": "自动切换状态",
+  "smartFailoverCheckNow": "立即检测",
+  "smartFailoverReady": "已连接：{node} · {delay} ms",
+  "smartFailoverChecking": "正在检测 {count} 个非香港节点…",
+  "smartFailoverStopped": "启动 VPN 后开始自动检测。",
+  "smartFailoverEmpty": "没有找到非香港节点，请检查订阅内容。",
+  "smartFailoverUnavailable": "{count} 个候选中暂无延迟低于 {limit} ms 的可用节点，后台继续检测恢复。",
+  "smartFailoverDiagnostics": "已测 {tested} · 超标 {slow} · 拒绝 {refused} · 超时 {timeouts} · 出口排除/未知 {regions}",
+  "smartFailoverRefusedCodes": "服务探测返回 HTTP {codes}，属于访问被拒绝，并非网络超时。",
+  "smartFailoverStatusError": "无法读取核心状态，请检查 VPN 是否启动成功。",
+  "smartFailoverDirect": "当前为直连模式，请切到规则或全局模式以启用自动选点。",
+  "@smartFailoverReady": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      },
+      "delay": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverChecking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverUnavailable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverDiagnostics": {
+    "placeholders": {
+      "tested": {
+        "type": "int"
+      },
+      "slow": {
+        "type": "int"
+      },
+      "refused": {
+        "type": "int"
+      },
+      "timeouts": {
+        "type": "int"
+      },
+      "regions": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverRefusedCodes": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
       }
     }
   }

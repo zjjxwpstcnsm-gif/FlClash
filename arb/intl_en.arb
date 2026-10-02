@@ -555,7 +555,7 @@
   "secondsCount": "{count} seconds",
   "entriesCount": "{count} entries",
   "smartFailover": "Automatic node failover",
-  "smartFailoverDesc": "Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.",
+  "smartFailoverDesc": "Checks the current non-Hong Kong node every 5 seconds; failed nodes switch automatically. Startup/TLS time is excluded from the latency limit; each probe has a 5-second timeout. Runs in the core in Rule/Global mode.",
   "smartFailoverMaxDelay": "Maximum usable latency",
   "smartFailoverMaxDelayDesc": "Exclude nodes at or above {limit} ms. Applies when automatic failover is on.",
   "smartFailoverLatencyRange": "Enter a whole number from 50 to 3000 ms.",
@@ -563,6 +563,70 @@
     "placeholders": {
       "limit": {
         "type": "int"
+      }
+    }
+  },
+  "smartFailoverStatus": "Automatic failover status",
+  "smartFailoverCheckNow": "Check now",
+  "smartFailoverReady": "Connected: {node} · {delay} ms",
+  "smartFailoverChecking": "Checking {count} non-Hong Kong nodes…",
+  "smartFailoverStopped": "Start the VPN to begin automatic checks.",
+  "smartFailoverEmpty": "No non-Hong Kong nodes found. Check your subscription.",
+  "smartFailoverUnavailable": "Among {count} candidates, no usable node is below {limit} ms; recovery checks continue.",
+  "smartFailoverDiagnostics": "Tested {tested} · Over limit {slow} · Refused {refused} · Timeout {timeouts} · Exit excluded/unknown {regions}",
+  "smartFailoverRefusedCodes": "Service probe returned HTTP {codes}. This is an access refusal, not a network timeout.",
+  "smartFailoverStatusError": "Cannot read the core status. Check whether the VPN started successfully.",
+  "smartFailoverDirect": "Direct mode bypasses automatic selection. Switch to Rule or Global mode.",
+  "@smartFailoverReady": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      },
+      "delay": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverChecking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverUnavailable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverDiagnostics": {
+    "placeholders": {
+      "tested": {
+        "type": "int"
+      },
+      "slow": {
+        "type": "int"
+      },
+      "refused": {
+        "type": "int"
+      },
+      "timeouts": {
+        "type": "int"
+      },
+      "regions": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverRefusedCodes": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
       }
     }
   }

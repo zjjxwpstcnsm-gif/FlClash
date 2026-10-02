@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/metacubex/mihomo/adapter"
 	"github.com/metacubex/mihomo/config"
@@ -51,6 +52,13 @@ func TestSmartSelectorStartsClosedAndCannotBeManuallyPinned(t *testing.T) {
 	if s.Now() != "REJECT" {
 		t.Fatal("unverified node selected")
 	}
+	if !s.SupportUDP() {
+		t.Fatal("UDP rules would skip the automatic group and fall through to DIRECT")
+	}
+	if conn, err := s.ListenPacketContext(context.Background(), &C.Metadata{Host: "example.com", DstPort: 443, NetWork: C.UDP}); err == nil {
+		conn.Close()
+		t.Fatal("unverified UDP traffic was allowed")
+	}
 	if len(s.candidates()) != 1 || s.candidates()["Japan"] == nil {
 		t.Fatal("candidate filtering failed")
 	}
@@ -87,5 +95,61 @@ func TestSmartProviderSubscriptionAndEmptyCandidates(t *testing.T) {
 	installSmartFailover(cfg)
 	if smartGroup.Now() != "REJECT" || len(smartGroup.candidates()) != 0 {
 		t.Fatal("empty subscription did not fail closed")
+	}
+}
+
+func TestStartingAnActiveMonitorPreservesItsSelectedNode(t *testing.T) {
+	raw := config.DefaultRawConfig()
+	raw.Proxy = []map[string]any{{"name": "Japan", "type": "socks5", "server": "127.0.0.1", "port": 10002}}
+	if err := addSmartFailover(raw); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := config.ParseRawConfig(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	previousGroup, previousCancel, previousRunning := smartGroup, smartCancel, isRunning
+	defer func() {
+		stopSmartFailover()
+		smartGroup, smartCancel, isRunning = previousGroup, previousCancel, previousRunning
+	}()
+	installSmartFailover(cfg)
+	smartGroup.choice.Store(&smartChoice{proxy: cfg.Proxies["Japan"]})
+	ctx, cancel := context.WithCancel(context.Background())
+	smartCancel = cancel
+	isRunning = true
+	startSmartFailover()
+	if smartGroup.Now() != "Japan" || ctx.Err() != nil {
+		t.Fatal("duplicate listener startup disconnected the selected node")
+	}
+}
+
+func TestSmartStatusReportsDiagnosticsWithoutRestartingMonitor(t *testing.T) {
+	raw := config.DefaultRawConfig()
+	raw.Proxy = []map[string]any{{"name": "Japan", "type": "socks5", "server": "127.0.0.1", "port": 10002}}
+	if err := addSmartFailover(raw); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := config.ParseRawConfig(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	previousGroup, previousRunning := smartGroup, isRunning
+	defer func() { smartGroup, isRunning = previousGroup, previousRunning }()
+	installSmartFailover(cfg)
+	isRunning = true
+	smartGroup.results["Japan"] = smartNodeResult{Reason: "service_refused:403", CheckedAt: time.Now().UnixMilli()}
+	status := handleSmartFailoverStatus(true)
+	if status["state"] != "unavailable" || status["candidateCount"] != 1 || status["results"].(map[string]smartNodeResult)["Japan"].Reason != "service_refused:403" {
+		t.Fatal(status)
+	}
+	select {
+	case <-smartGroup.wake:
+	default:
+		t.Fatal("manual check did not wake the core monitor")
+	}
+	isRunning = false
+	if handleSmartFailoverStatus(false)["state"] != "stopped" {
+		t.Fatal("stopped service appeared ready")
 	}
 }

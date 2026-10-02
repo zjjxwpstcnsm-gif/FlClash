@@ -89,6 +89,7 @@ const (
 	validateConfigMethod           CoreMethod = "validateConfig"
 	updateConfigMethod             CoreMethod = "updateConfig"
 	getProxiesMethod               CoreMethod = "getProxies"
+	getSmartFailoverStatusMethod   CoreMethod = "getSmartFailoverStatus"
 	changeProxyMethod              CoreMethod = "changeProxy"
 	getTrafficMethod               CoreMethod = "getTraffic"
 	getTotalTrafficMethod          CoreMethod = "getTotalTraffic"

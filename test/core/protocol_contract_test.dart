@@ -77,6 +77,12 @@ class _RecordingCoreHandler extends CoreHandlerInterface {
         'mode': 'rule',
         'rule': ['MATCH,DIRECT'],
       },
+      CoreMethod.getSmartFailoverStatus => {
+        'enabled': true,
+        'state': 'ready',
+        'current': 'Japan',
+        'delayMs': 80,
+      },
       CoreMethod.getMemory => 2048,
       _ => '',
     };
@@ -199,6 +205,12 @@ void main() {
 
   test('core interface converts structured method results', () async {
     final handler = _RecordingCoreHandler();
+
+    expect(
+      (await handler.getSmartFailoverStatus(recheck: true))['current'],
+      'Japan',
+    );
+    expect(handler.calls[CoreMethod.getSmartFailoverStatus], isTrue);
 
     expect(await handler.getTraffic(false), const Traffic(up: 12, down: 34));
     expect(
