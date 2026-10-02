@@ -76,12 +76,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "${count} items have been selected";
 
-  static String m24(limit) =>
+  static String m24(count) => "Checking ${count} non-Hong Kong nodes…";
+
+  static String m25(tested, slow, refused, timeouts, regions) =>
+      "Tested ${tested} · Over limit ${slow} · Refused ${refused} · Network/timeout ${timeouts} · Exit excluded/unknown ${regions}";
+
+  static String m26(limit) =>
       "Exclude nodes at or above ${limit} ms. Applies when automatic failover is on.";
 
-  static String m25(label) => "${label} must be a url";
+  static String m27(node, delay) => "Connected: ${node} · ${delay} ms";
 
-  static String m26(count) =>
+  static String m28(codes) =>
+      "Service probe returned HTTP ${codes}. This is an access refusal, not a network timeout.";
+
+  static String m29(count, limit) =>
+      "Among ${count} candidates, no usable node is below ${limit} ms; recovery checks continue.";
+
+  static String m30(label) => "${label} must be a url";
+
+  static String m31(count) =>
       "${Intl.plural(count, one: '1 year ago', other: '${count} years ago')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -953,8 +966,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "smartFailover": MessageLookupByLibrary.simpleMessage(
       "Automatic node failover",
     ),
+    "smartFailoverCheckNow": MessageLookupByLibrary.simpleMessage("Check now"),
+    "smartFailoverChecking": m24,
     "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
-      "Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.",
+      "Checks the current non-Hong Kong node every 5 seconds; failed nodes switch automatically. Startup/TLS time is excluded from the latency limit; each probe has a 5-second timeout. Runs in the core in Rule/Global mode.",
+    ),
+    "smartFailoverDiagnostics": m25,
+    "smartFailoverDirect": MessageLookupByLibrary.simpleMessage(
+      "Direct mode bypasses automatic selection. Switch to Rule or Global mode.",
+    ),
+    "smartFailoverEmpty": MessageLookupByLibrary.simpleMessage(
+      "No non-Hong Kong nodes found. Check your subscription.",
     ),
     "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
       "Enter a whole number from 50 to 3000 ms.",
@@ -962,7 +984,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage(
       "Maximum usable latency",
     ),
-    "smartFailoverMaxDelayDesc": m24,
+    "smartFailoverMaxDelayDesc": m26,
+    "smartFailoverReady": m27,
+    "smartFailoverRefusedCodes": m28,
+    "smartFailoverStatus": MessageLookupByLibrary.simpleMessage(
+      "Automatic failover status",
+    ),
+    "smartFailoverStatusError": MessageLookupByLibrary.simpleMessage(
+      "Cannot read the core status. Check whether the VPN started successfully.",
+    ),
+    "smartFailoverStopped": MessageLookupByLibrary.simpleMessage(
+      "Start the VPN to begin automatic checks.",
+    ),
+    "smartFailoverUnavailable": m29,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks Port"),
     "sort": MessageLookupByLibrary.simpleMessage("Sort"),
     "source": MessageLookupByLibrary.simpleMessage("Source"),
@@ -1054,7 +1088,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Obtain profile through URL",
     ),
-    "urlTip": m25,
+    "urlTip": m30,
     "useHosts": MessageLookupByLibrary.simpleMessage("Use hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("Use system hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("User-Agent"),
@@ -1074,7 +1108,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "WebDAV configuration",
     ),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("Whitelist mode"),
-    "yearsAgo": m26,
+    "yearsAgo": m31,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Simplified Chinese"),
   };
 }

@@ -51,7 +51,7 @@ jobs:
           flutter pub get
           dart run build_runner build --delete-conflicting-outputs
           dart run intl_utils:generate
-          dart format lib/models/config.dart lib/models/core.dart lib/providers/actions/setup.dart lib/providers/state.dart lib/manager/core_manager.dart lib/views/application_setting.dart lib/views/tools.dart test/widgets/smart_failover_test.dart test/models/config_test.dart
+          dart format lib/models/config.dart lib/models/core.dart lib/providers/actions/setup.dart lib/providers/state.dart lib/core/controller.dart lib/core/interface.dart lib/core/method.dart lib/manager/core_manager.dart lib/views/application_setting.dart lib/views/tools.dart test/widgets/smart_failover_test.dart test/models/config_test.dart test/core/protocol_contract_test.dart
 
       - name: Analyze and test Flutter
         run: |
@@ -78,17 +78,30 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add lib test/models/config_test.dart test/widgets/smart_failover_test.dart pubspec.lock
+          git add lib test/models/config_test.dart test/widgets/smart_failover_test.dart test/core/protocol_contract_test.dart pubspec.lock
           if ! git diff --cached --quiet; then
             git commit -m 'build: regenerate Flutter models and translations'
             git push origin HEAD:${{ github.ref_name }}
+          fi
+
+      - name: Retain development signing key for subsequent previews
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: flclash-auto-development-signing-v1
+
+      - name: Prepare development signing key
+        run: |
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            mkdir -p "$HOME/.android"
+            keytool -genkeypair -keystore "$HOME/.android/debug.keystore" -storepass android -keypass android -alias androiddebugkey -dname 'CN=Android Debug,O=Android,C=US' -keyalg RSA -keysize 2048 -validity 10000 -noprompt
           fi
 
       - name: Build Android APKs
         env:
           ANDROID_NDK: ${{ steps.ndk.outputs.ndk-path }}
         run: |
-          flutter build apk --release --split-per-abi --target-platform android-arm64,android-arm --build-name 0.8.96-auto.1 --build-number $((2026090900 + GITHUB_RUN_NUMBER))
+          flutter build apk --release --split-per-abi --target-platform android-arm64,android-arm --build-name 0.8.96-auto.2 --build-number $((2026100300 + GITHUB_RUN_NUMBER))
 
       - name: Prepare downloads
         run: |

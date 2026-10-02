@@ -555,7 +555,7 @@
   "secondsCount": "{count} 秒",
   "entriesCount": "{count} エントリ",
   "smartFailover": "ノードの自動切り替え",
-  "smartFailoverDesc": "5 秒ごとに接続を確認し、香港以外で ChatGPT ドメインに到達できる低遅延ノードを優先します。3 秒でタイムアウトすると切り替え、バックグラウンドでも継続します。ルール／グローバルモードに適用。",
+  "smartFailoverDesc": "香港以外の現在のノードを5秒ごとに確認し、障害時に自動切り替えします。遅延制限は最初の接続とTLSを含まず、確認は最大5秒です。ルール/グローバルモードでコアが動作します。",
   "smartFailoverMaxDelay": "使用可能な最大遅延",
   "smartFailoverMaxDelayDesc": "{limit} ms 以上のノードを除外します。自動切り替えがオンの場合に適用されます。",
   "smartFailoverLatencyRange": "50〜3000 ms の整数を入力してください。",
@@ -563,6 +563,70 @@
     "placeholders": {
       "limit": {
         "type": "int"
+      }
+    }
+  },
+  "smartFailoverStatus": "自動切り替えの状態",
+  "smartFailoverCheckNow": "今すぐ確認",
+  "smartFailoverReady": "接続中：{node} · {delay} ms",
+  "smartFailoverChecking": "香港以外の {count} ノードを確認中…",
+  "smartFailoverStopped": "VPN を開始すると自動確認が始まります。",
+  "smartFailoverEmpty": "香港以外のノードがありません。サブスクリプションを確認してください。",
+  "smartFailoverUnavailable": "{count} 候補に {limit} ms 未満の利用可能なノードがありません。復旧確認を継続します。",
+  "smartFailoverDiagnostics": "確認 {tested} · 遅延超過 {slow} · 拒否 {refused} · 接続失敗/タイムアウト {timeouts} · 出口除外/不明 {regions}",
+  "smartFailoverRefusedCodes": "サービス確認は HTTP {codes} を返しました。接続タイムアウトではなくアクセス拒否です。",
+  "smartFailoverStatusError": "コアの状態を取得できません。VPN が開始されたか確認してください。",
+  "smartFailoverDirect": "直接モードは自動選択を使用しません。ルールまたはグローバルモードに切り替えてください。",
+  "@smartFailoverReady": {
+    "placeholders": {
+      "node": {
+        "type": "String"
+      },
+      "delay": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverChecking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverUnavailable": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverDiagnostics": {
+    "placeholders": {
+      "tested": {
+        "type": "int"
+      },
+      "slow": {
+        "type": "int"
+      },
+      "refused": {
+        "type": "int"
+      },
+      "timeouts": {
+        "type": "int"
+      },
+      "regions": {
+        "type": "int"
+      }
+    }
+  },
+  "@smartFailoverRefusedCodes": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
       }
     }
   }

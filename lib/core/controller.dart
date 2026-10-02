@@ -133,6 +133,9 @@ class CoreController {
     return await _interface.changeProxy(changeProxyParams);
   }
 
+  Future<Map<String, dynamic>> getSmartFailoverStatus({bool recheck = false}) =>
+      _interface.getSmartFailoverStatus(recheck: recheck);
+
   Future<List<TrackerInfo>> getConnections() async {
     return _interface.getConnections();
   }

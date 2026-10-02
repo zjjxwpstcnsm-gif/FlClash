@@ -69,11 +69,24 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "${count} 項目が選択されています";
 
-  static String m24(limit) => "${limit} ms 以上のノードを除外します。自動切り替えがオンの場合に適用されます。";
+  static String m24(count) => "香港以外の ${count} ノードを確認中…";
 
-  static String m25(label) => "${label}はURLである必要があります";
+  static String m25(tested, slow, refused, timeouts, regions) =>
+      "確認 ${tested} · 遅延超過 ${slow} · 拒否 ${refused} · 接続失敗/タイムアウト ${timeouts} · 出口除外/不明 ${regions}";
 
-  static String m26(count) => "${count}年前";
+  static String m26(limit) => "${limit} ms 以上のノードを除外します。自動切り替えがオンの場合に適用されます。";
+
+  static String m27(node, delay) => "接続中：${node} · ${delay} ms";
+
+  static String m28(codes) =>
+      "サービス確認は HTTP ${codes} を返しました。接続タイムアウトではなくアクセス拒否です。";
+
+  static String m29(count, limit) =>
+      "${count} 候補に ${limit} ms 未満の利用可能なノードがありません。復旧確認を継続します。";
+
+  static String m30(label) => "${label}はURLである必要があります";
+
+  static String m31(count) => "${count}年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -770,14 +783,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("バックグラウンドで起動"),
     "size": MessageLookupByLibrary.simpleMessage("サイズ"),
     "smartFailover": MessageLookupByLibrary.simpleMessage("ノードの自動切り替え"),
+    "smartFailoverCheckNow": MessageLookupByLibrary.simpleMessage("今すぐ確認"),
+    "smartFailoverChecking": m24,
     "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
-      "5 秒ごとに接続を確認し、香港以外で ChatGPT ドメインに到達できる低遅延ノードを優先します。3 秒でタイムアウトすると切り替え、バックグラウンドでも継続します。ルール／グローバルモードに適用。",
+      "香港以外の現在のノードを5秒ごとに確認し、障害時に自動切り替えします。遅延制限は最初の接続とTLSを含まず、確認は最大5秒です。ルール/グローバルモードでコアが動作します。",
+    ),
+    "smartFailoverDiagnostics": m25,
+    "smartFailoverDirect": MessageLookupByLibrary.simpleMessage(
+      "直接モードは自動選択を使用しません。ルールまたはグローバルモードに切り替えてください。",
+    ),
+    "smartFailoverEmpty": MessageLookupByLibrary.simpleMessage(
+      "香港以外のノードがありません。サブスクリプションを確認してください。",
     ),
     "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
       "50〜3000 ms の整数を入力してください。",
     ),
     "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage("使用可能な最大遅延"),
-    "smartFailoverMaxDelayDesc": m24,
+    "smartFailoverMaxDelayDesc": m26,
+    "smartFailoverReady": m27,
+    "smartFailoverRefusedCodes": m28,
+    "smartFailoverStatus": MessageLookupByLibrary.simpleMessage("自動切り替えの状態"),
+    "smartFailoverStatusError": MessageLookupByLibrary.simpleMessage(
+      "コアの状態を取得できません。VPN が開始されたか確認してください。",
+    ),
+    "smartFailoverStopped": MessageLookupByLibrary.simpleMessage(
+      "VPN を開始すると自動確認が始まります。",
+    ),
+    "smartFailoverUnavailable": m29,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socksポート"),
     "sort": MessageLookupByLibrary.simpleMessage("並び替え"),
     "source": MessageLookupByLibrary.simpleMessage("ソース"),
@@ -853,7 +885,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("アップロード"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("URL経由でプロファイルを取得"),
-    "urlTip": m25,
+    "urlTip": m30,
     "useHosts": MessageLookupByLibrary.simpleMessage("ホストを使用"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("システムホストを使用"),
     "userAgent": MessageLookupByLibrary.simpleMessage("ユーザーエージェント"),
@@ -869,7 +901,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("変更はVPN再起動後に有効"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV設定"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("ホワイトリストモード"),
-    "yearsAgo": m26,
+    "yearsAgo": m31,
     "zh_CN": MessageLookupByLibrary.simpleMessage("簡体字中国語"),
   };
 }

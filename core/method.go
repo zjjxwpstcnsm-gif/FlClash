@@ -90,6 +90,13 @@ func handleMethodCall(call *MethodCall, response MethodResponse) {
 		}
 	}()
 	switch call.Method {
+	case getSmartFailoverStatusMethod:
+		recheck := false
+		if !decodeMethodArguments(call, response, &recheck) {
+			return
+		}
+		response.success(handleSmartFailoverStatus(recheck))
+		return
 	case initClashMethod:
 		params := InitParams{}
 		if !decodeMethodArguments(call, response, &params) {

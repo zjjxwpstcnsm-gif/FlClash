@@ -72,6 +72,7 @@ class _ToolViewState extends ConsumerState<ToolsView> {
       items: [
         const SmartFailoverItem(),
         const SmartFailoverMaxDelayItem(),
+        const SmartFailoverStatusItem(),
         const _LocaleItem(),
         const _ThemeItem(),
         const _BackupItem(),

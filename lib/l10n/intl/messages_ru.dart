@@ -75,12 +75,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "Выбрано ${count} элементов";
 
-  static String m24(limit) =>
+  static String m24(count) => "Проверка ${count} узлов вне Гонконга…";
+
+  static String m25(tested, slow, refused, timeouts, regions) =>
+      "Проверено ${tested} · Медленные ${slow} · Отказ ${refused} · Ошибка сети/таймаут ${timeouts} · Выход исключён/неизвестен ${regions}";
+
+  static String m26(limit) =>
       "Исключать узлы с задержкой ${limit} мс и выше при автоматическом переключении.";
 
-  static String m25(label) => "${label} должен быть URL";
+  static String m27(node, delay) => "Подключено: ${node} · ${delay} мс";
 
-  static String m26(count) =>
+  static String m28(codes) =>
+      "Проверка сервиса вернула HTTP ${codes}. Это отказ в доступе, а не таймаут сети.";
+
+  static String m29(count, limit) =>
+      "Среди ${count} узлов нет доступных с задержкой ниже ${limit} мс. Проверки восстановления продолжаются.";
+
+  static String m30(label) => "${label} должен быть URL";
+
+  static String m31(count) =>
       "${Intl.plural(count, one: '${count} год назад', few: '${count} года назад', many: '${count} лет назад', other: '${count} года назад')}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -1000,8 +1013,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "smartFailover": MessageLookupByLibrary.simpleMessage(
       "Автоматическое переключение узлов",
     ),
+    "smartFailoverCheckNow": MessageLookupByLibrary.simpleMessage(
+      "Проверить сейчас",
+    ),
+    "smartFailoverChecking": m24,
     "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
-      "Проверка каждые 5 секунд. Выбор быстрого узла вне Гонконга с доступом к домену ChatGPT. Переключение при тайм-ауте 3 секунды, в том числе в фоне. Для прокси-трафика в режиме правил или глобальном режиме.",
+      "Проверяет текущий узел вне Гонконга каждые 5 секунд и переключает при сбое. Начальное подключение и TLS не входят в задержку; таймаут проверки — 5 секунд. Работает в ядре в режиме правил или глобальном режиме.",
+    ),
+    "smartFailoverDiagnostics": m25,
+    "smartFailoverDirect": MessageLookupByLibrary.simpleMessage(
+      "Прямой режим не использует автоматический выбор. Включите режим правил или глобальный режим.",
+    ),
+    "smartFailoverEmpty": MessageLookupByLibrary.simpleMessage(
+      "Узлы вне Гонконга не найдены. Проверьте подписку.",
     ),
     "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
       "Введите целое число от 50 до 3000 мс.",
@@ -1009,7 +1033,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage(
       "Максимальная допустимая задержка",
     ),
-    "smartFailoverMaxDelayDesc": m24,
+    "smartFailoverMaxDelayDesc": m26,
+    "smartFailoverReady": m27,
+    "smartFailoverRefusedCodes": m28,
+    "smartFailoverStatus": MessageLookupByLibrary.simpleMessage(
+      "Состояние автоматического переключения",
+    ),
+    "smartFailoverStatusError": MessageLookupByLibrary.simpleMessage(
+      "Не удалось получить состояние ядра. Проверьте запуск VPN.",
+    ),
+    "smartFailoverStopped": MessageLookupByLibrary.simpleMessage(
+      "Запустите VPN для автоматических проверок.",
+    ),
+    "smartFailoverUnavailable": m29,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks-порт"),
     "sort": MessageLookupByLibrary.simpleMessage("Сортировка"),
     "source": MessageLookupByLibrary.simpleMessage("Источник"),
@@ -1115,7 +1151,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "urlDesc": MessageLookupByLibrary.simpleMessage(
       "Получить профиль через URL",
     ),
-    "urlTip": m25,
+    "urlTip": m30,
     "useHosts": MessageLookupByLibrary.simpleMessage("Использовать hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage(
       "Использовать системные hosts",
@@ -1139,7 +1175,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "whitelistMode": MessageLookupByLibrary.simpleMessage(
       "Режим белого списка",
     ),
-    "yearsAgo": m26,
+    "yearsAgo": m31,
     "zh_CN": MessageLookupByLibrary.simpleMessage("Упрощенный китайский"),
   };
 }

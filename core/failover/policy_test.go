@@ -3,7 +3,6 @@ package failover
 import (
 	"context"
 	"errors"
-	"reflect"
 	"testing"
 	"time"
 )
@@ -49,6 +48,9 @@ func TestFailureSelectsFastestHealthyNonHKAndRecovers(t *testing.T) {
 	}
 	names := []string{"HK01", "Japan", "Singapore", "US"}
 	p.Step(context.Background(), now, names, probe, selectNode)
+	if p.Current != "Japan" {
+		t.Fatalf("did not finish on the fastest healthy node: %q", p.Current)
+	}
 	delete(delays, "Japan")
 	p.Step(context.Background(), now.Add(5*time.Second), names, probe, selectNode)
 	if p.Current != "Singapore" {
@@ -68,8 +70,16 @@ func TestFailureSelectsFastestHealthyNonHKAndRecovers(t *testing.T) {
 	}
 	delays["US"] = 250 * time.Millisecond
 	p.Step(context.Background(), now.Add(20*time.Second), names, probe, selectNode)
-	if !reflect.DeepEqual(transitions, []string{"Japan", "", "Singapore", "", "US"}) {
-		t.Fatalf("transitions %v", transitions)
+	failures := 0
+	for _, name := range transitions {
+		if name == "" {
+			failures++
+		} else if !EligibleName(name) {
+			t.Fatalf("selected excluded node: %v", transitions)
+		}
+	}
+	if failures != 2 || selected != "US" {
+		t.Fatalf("failure and recovery transitions: %v", transitions)
 	}
 }
 
@@ -162,5 +172,60 @@ func TestLatencyLimitValidation(t *testing.T) {
 		if MaxDelay(value) != time.Duration(value)*time.Millisecond {
 			t.Fatalf("valid threshold %d", value)
 		}
+	}
+}
+
+func TestRecoveryPublishesBeforeSlowCandidatesFinish(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	p := Policy{MaxDelay: time.Second}
+	blocked := make(chan struct{})
+	defer close(blocked)
+	selected := make(chan string, 4)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		p.Step(ctx, time.Now(), []string{"Japan", "Singapore"}, func(ctx context.Context, name string) (time.Duration, error) {
+			if name == "Singapore" {
+				select {
+				case <-blocked:
+				case <-ctx.Done():
+					return 0, ctx.Err()
+				}
+			}
+			return 100 * time.Millisecond, nil
+		}, func(name string, _ bool) { selected <- name })
+	}()
+	select {
+	case name := <-selected:
+		if name != "Japan" {
+			t.Fatalf("selected unverified node %q", name)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("healthy recovery waited for the blocked candidate")
+	}
+	select {
+	case <-done:
+		t.Fatal("slow probe did not remain in progress")
+	default:
+	}
+	cancel()
+	<-done
+}
+
+func TestOnlyNodeCanRecoverBeforeCooldownExpires(t *testing.T) {
+	p := Policy{Current: "Japan", MaxDelay: time.Second}
+	now := time.Unix(100, 0)
+	p.Step(context.Background(), now, []string{"Japan"}, func(context.Context, string) (time.Duration, error) {
+		return 0, errors.New("timeout")
+	}, func(string, bool) {})
+	if p.Current != "" {
+		t.Fatal("failed node remained selected")
+	}
+	p.Step(context.Background(), now.Add(CheckInterval), []string{"Japan"}, func(context.Context, string) (time.Duration, error) {
+		return 100 * time.Millisecond, nil
+	}, func(string, bool) {})
+	if p.Current != "Japan" {
+		t.Fatal("sole recovered node was blocked by cooldown")
 	}
 }

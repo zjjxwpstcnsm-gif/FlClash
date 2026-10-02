@@ -12,6 +12,7 @@ enum CoreMethod {
   updateConfig,
   getConfig,
   getProxies,
+  getSmartFailoverStatus,
   changeProxy,
   getTraffic,
   getTotalTraffic,

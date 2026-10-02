@@ -7,12 +7,14 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
 const (
 	CheckInterval   = 5 * time.Second
-	ProbeTimeout    = 3 * time.Second
+	ProbeTimeout    = 5 * time.Second
+	ScanTimeout     = 2 * ProbeTimeout
 	ScanInterval    = 60 * time.Second
 	Cooldown        = 30 * time.Second
 	Tolerance       = 50 * time.Millisecond
@@ -42,6 +44,7 @@ type Policy struct {
 	lastScan     time.Time
 	lastSwitch   time.Time
 	blockedUntil map[string]time.Time
+	scanOffset   int
 }
 
 func MaxDelay(milliseconds int) time.Duration {
@@ -66,8 +69,8 @@ func (p *Policy) Step(ctx context.Context, now time.Time, names []string, probe 
 			delete(p.blockedUntil, name)
 		}
 	}
-	measure := func(name string) (time.Duration, error) {
-		testCtx, cancel := context.WithTimeout(ctx, ProbeTimeout)
+	measure := func(parent context.Context, name string) (time.Duration, error) {
+		testCtx, cancel := context.WithTimeout(parent, ProbeTimeout)
 		defer cancel()
 		delay, err := probe(testCtx, name)
 		limit := p.MaxDelay
@@ -83,7 +86,7 @@ func (p *Policy) Step(ctx context.Context, now time.Time, names []string, probe 
 	if p.Current != "" {
 		delay, err := time.Duration(0), context.DeadlineExceeded
 		if available[p.Current] {
-			delay, err = measure(p.Current)
+			delay, err = measure(ctx, p.Current)
 		}
 		if ctx.Err() != nil {
 			return
@@ -100,44 +103,88 @@ func (p *Policy) Step(ctx context.Context, now time.Time, names []string, probe 
 			}
 		}
 	}
+	recovering := p.Current == ""
+	var cooling []string
 	names = nil
 	for name := range available {
-		if name != p.Current && !now.Before(p.blockedUntil[name]) {
+		if name == p.Current {
+			continue
+		}
+		if now.Before(p.blockedUntil[name]) {
+			if p.blockedUntil[name] != now.Add(Cooldown) {
+				cooling = append(cooling, name)
+			}
+		} else {
 			names = append(names, name)
 		}
 	}
 	sort.Strings(names)
-	var mu sync.Mutex
-	var wg sync.WaitGroup
-	jobs := make(chan string)
-	for i := 0; i < min(10, len(names)); i++ {
+	if len(names) > 0 {
+		offset := p.scanOffset % len(names)
+		names = append(names[offset:], names[:offset]...)
+	}
+	scan := func(candidates []string) {
+		type result struct {
+			name  string
+			delay time.Duration
+			err   error
+		}
+		scanCtx, cancel := context.WithTimeout(ctx, ScanTimeout)
+		defer cancel()
+		var wg sync.WaitGroup
+		var dispatched atomic.Int32
+		jobs := make(chan string)
+		completed := make(chan result, len(candidates))
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for name := range jobs {
-				if ctx.Err() != nil {
-					continue
-				}
-				delay, err := measure(name)
-				if err == nil {
-					mu.Lock()
-					results[name] = delay
-					mu.Unlock()
+			defer close(jobs)
+			for _, name := range candidates {
+				select {
+				case <-scanCtx.Done():
+					return
+				case jobs <- name:
+					dispatched.Add(1)
 				}
 			}
 		}()
-	}
-	for _, name := range names {
-		select {
-		case jobs <- name:
-		case <-ctx.Done():
-			close(jobs)
-			wg.Wait()
-			return
+		for i := 0; i < min(10, len(candidates)); i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for name := range jobs {
+					if scanCtx.Err() != nil {
+						return
+					}
+					delay, err := measure(scanCtx, name)
+					completed <- result{name: name, delay: delay, err: err}
+				}
+			}()
 		}
+		go func() {
+			wg.Wait()
+			close(completed)
+		}()
+		for r := range completed {
+			if ctx.Err() != nil || r.err != nil {
+				continue
+			}
+			results[r.name] = r.delay
+			if p.Current == "" {
+				p.Current = r.name
+				p.lastSwitch = now
+				delete(p.blockedUntil, r.name)
+				selectNode(r.name, false)
+			}
+		}
+		p.scanOffset += int(dispatched.Load())
 	}
-	close(jobs)
-	wg.Wait()
+	scan(names)
+	if p.Current == "" && ctx.Err() == nil {
+		sort.Strings(cooling)
+		scan(cooling)
+		names = append(names, cooling...)
+	}
 	if ctx.Err() != nil {
 		return
 	}
@@ -151,7 +198,7 @@ func (p *Policy) Step(ctx context.Context, now time.Time, names []string, probe 
 	if best == "" || best == p.Current {
 		return
 	}
-	if p.Current != "" && (now.Sub(p.lastSwitch) < ScanInterval || results[p.Current]-results[best] < Tolerance) {
+	if !recovering && p.Current != "" && (now.Sub(p.lastSwitch) < ScanInterval || results[p.Current]-results[best] < Tolerance) {
 		return
 	}
 	p.Current = best

@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/common/theme.dart';
+import 'package:fl_clash/core/core.dart';
+import 'package:fl_clash/core/interface.dart';
 import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/app.dart';
@@ -13,8 +15,121 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _MockFailoverCore extends Mock implements CoreHandlerInterface {}
 
 void main() {
+  testWidgets('status shows the active node and requests an immediate check', (
+    tester,
+  ) async {
+    final container = _container();
+    addTearDown(container.dispose);
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: true));
+    final handler = _MockFailoverCore();
+    when(
+      () => handler.getSmartFailoverStatus(recheck: any(named: 'recheck')),
+    ).thenAnswer(
+      (_) async => {
+        'state': 'ready',
+        'running': true,
+        'mode': 'rule',
+        'current': 'Japan 01',
+        'delayMs': 80,
+        'candidateCount': 2,
+      },
+    );
+    await tester.pumpWidget(
+      _TestApp(
+        container: container,
+        child: SmartFailoverStatusItem(
+          controller: CoreController.test(handler),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Connected: Japan 01 · 80 ms'), findsOneWidget);
+    await tester.tap(find.byTooltip('Check now'));
+    await tester.pumpAndSettle();
+    verify(() => handler.getSmartFailoverStatus(recheck: true)).called(1);
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: false));
+    await tester.pump();
+    verify(() => handler.getSmartFailoverStatus(recheck: false)).called(1);
+    await tester.pump(const Duration(seconds: 3));
+    verifyNoMoreInteractions(handler);
+    expect(find.text('Automatic failover status'), findsNothing);
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets('status explains HTTP refusal and clears its timer on disposal', (
+    tester,
+  ) async {
+    final container = _container();
+    addTearDown(container.dispose);
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: true));
+    final handler = _MockFailoverCore();
+    when(
+      () => handler.getSmartFailoverStatus(recheck: any(named: 'recheck')),
+    ).thenAnswer(
+      (_) async => {
+        'state': 'unavailable',
+        'running': true,
+        'candidateCount': 2,
+        'results': {
+          'Japan': {'reason': 'service_refused:403'},
+          'Singapore': {'reason': 'connection_failed'},
+        },
+      },
+    );
+    await tester.pumpWidget(
+      _TestApp(
+        container: container,
+        child: SmartFailoverStatusItem(
+          controller: CoreController.test(handler),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('HTTP 403'), findsOneWidget);
+    expect(find.textContaining('Network/timeout 1'), findsOneWidget);
+    expect(find.textContaining('200 ms'), findsOneWidget);
+    verify(() => handler.getSmartFailoverStatus(recheck: false)).called(1);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 3));
+    verifyNoMoreInteractions(handler);
+  });
+
+  testWidgets('status displays core read failures', (tester) async {
+    final container = _container();
+    addTearDown(container.dispose);
+    container
+        .read(appSettingProvider.notifier)
+        .update((state) => state.copyWith(smartFailover: true));
+    final handler = _MockFailoverCore();
+    when(
+      () => handler.getSmartFailoverStatus(recheck: any(named: 'recheck')),
+    ).thenAnswer((_) async => throw StateError('core disconnected'));
+    await tester.pumpWidget(
+      _TestApp(
+        container: container,
+        child: SmartFailoverStatusItem(
+          controller: CoreController.test(handler),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Cannot read the core status'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 3));
+    expect(tester.takeException(), isNull);
+  });
+
   test('old settings stay disabled and enabled settings round-trip', () {
     expect(AppSettingProps.fromJson({}).smartFailover, isFalse);
     expect(AppSettingProps.fromJson({}).smartFailoverMaxDelayMs, 200);
