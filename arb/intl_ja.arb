@@ -573,7 +573,7 @@
   "smartFailoverStopped": "VPN を開始すると自動確認が始まります。",
   "smartFailoverEmpty": "香港以外のノードがありません。サブスクリプションを確認してください。",
   "smartFailoverUnavailable": "{count} 候補に {limit} ms 未満の利用可能なノードがありません。復旧確認を継続します。",
-  "smartFailoverDiagnostics": "確認 {tested} · 遅延超過 {slow} · 拒否 {refused} · タイムアウト {timeouts} · 出口除外/不明 {regions}",
+  "smartFailoverDiagnostics": "確認 {tested} · 遅延超過 {slow} · 拒否 {refused} · 接続失敗/タイムアウト {timeouts} · 出口除外/不明 {regions}",
   "smartFailoverRefusedCodes": "サービス確認は HTTP {codes} を返しました。接続タイムアウトではなくアクセス拒否です。",
   "smartFailoverStatusError": "コアの状態を取得できません。VPN が開始されたか確認してください。",
   "smartFailoverDirect": "直接モードは自動選択を使用しません。ルールまたはグローバルモードに切り替えてください。",

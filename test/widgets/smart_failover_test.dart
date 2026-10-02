@@ -80,9 +80,10 @@ void main() {
       (_) async => {
         'state': 'unavailable',
         'running': true,
-        'candidateCount': 1,
+        'candidateCount': 2,
         'results': {
           'Japan': {'reason': 'service_refused:403'},
+          'Singapore': {'reason': 'connection_failed'},
         },
       },
     );
@@ -96,6 +97,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.textContaining('HTTP 403'), findsOneWidget);
+    expect(find.textContaining('Network/timeout 1'), findsOneWidget);
     expect(find.textContaining('200 ms'), findsOneWidget);
     verify(() => handler.getSmartFailoverStatus(recheck: false)).called(1);
     await tester.pumpWidget(const SizedBox());
@@ -103,9 +105,7 @@ void main() {
     verifyNoMoreInteractions(handler);
   });
 
-  testWidgets('status displays core read failures and ignores late disposal', (
-    tester,
-  ) async {
+  testWidgets('status displays core read failures', (tester) async {
     final container = _container();
     addTearDown(container.dispose);
     container

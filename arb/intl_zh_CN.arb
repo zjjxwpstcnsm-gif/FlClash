@@ -573,7 +573,7 @@
   "smartFailoverStopped": "启动 VPN 后开始自动检测。",
   "smartFailoverEmpty": "没有找到非香港节点，请检查订阅内容。",
   "smartFailoverUnavailable": "{count} 个候选中暂无延迟低于 {limit} ms 的可用节点，后台继续检测恢复。",
-  "smartFailoverDiagnostics": "已测 {tested} · 超标 {slow} · 拒绝 {refused} · 超时 {timeouts} · 出口排除/未知 {regions}",
+  "smartFailoverDiagnostics": "已测 {tested} · 超标 {slow} · 拒绝 {refused} · 连接失败/超时 {timeouts} · 出口排除/未知 {regions}",
   "smartFailoverRefusedCodes": "服务探测返回 HTTP {codes}，属于访问被拒绝，并非网络超时。",
   "smartFailoverStatusError": "无法读取核心状态，请检查 VPN 是否启动成功。",
   "smartFailoverDirect": "当前为直连模式，请切到规则或全局模式以启用自动选点。",

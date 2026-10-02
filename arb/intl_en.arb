@@ -573,7 +573,7 @@
   "smartFailoverStopped": "Start the VPN to begin automatic checks.",
   "smartFailoverEmpty": "No non-Hong Kong nodes found. Check your subscription.",
   "smartFailoverUnavailable": "Among {count} candidates, no usable node is below {limit} ms; recovery checks continue.",
-  "smartFailoverDiagnostics": "Tested {tested} · Over limit {slow} · Refused {refused} · Timeout {timeouts} · Exit excluded/unknown {regions}",
+  "smartFailoverDiagnostics": "Tested {tested} · Over limit {slow} · Refused {refused} · Network/timeout {timeouts} · Exit excluded/unknown {regions}",
   "smartFailoverRefusedCodes": "Service probe returned HTTP {codes}. This is an access refusal, not a network timeout.",
   "smartFailoverStatusError": "Cannot read the core status. Check whether the VPN started successfully.",
   "smartFailoverDirect": "Direct mode bypasses automatic selection. Switch to Rule or Global mode.",

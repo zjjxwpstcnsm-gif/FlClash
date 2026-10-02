@@ -181,7 +181,15 @@ class _SmartFailoverStatusItemState
                 results.length,
                 reasons.where((reason) => reason == 'latency_limit').length,
                 refused.length,
-                reasons.where((reason) => reason.contains('deadline')).length,
+                reasons
+                    .where(
+                      (reason) =>
+                          reason.isNotEmpty &&
+                          reason != 'latency_limit' &&
+                          reason != 'exit_region' &&
+                          !reason.startsWith('service_refused:'),
+                    )
+                    .length,
                 reasons.where((reason) => reason == 'exit_region').length,
               ),
             ),

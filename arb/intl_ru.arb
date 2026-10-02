@@ -573,7 +573,7 @@
   "smartFailoverStopped": "Запустите VPN для автоматических проверок.",
   "smartFailoverEmpty": "Узлы вне Гонконга не найдены. Проверьте подписку.",
   "smartFailoverUnavailable": "Среди {count} узлов нет доступных с задержкой ниже {limit} мс. Проверки восстановления продолжаются.",
-  "smartFailoverDiagnostics": "Проверено {tested} · Медленные {slow} · Отказ {refused} · Таймаут {timeouts} · Выход исключён/неизвестен {regions}",
+  "smartFailoverDiagnostics": "Проверено {tested} · Медленные {slow} · Отказ {refused} · Ошибка сети/таймаут {timeouts} · Выход исключён/неизвестен {regions}",
   "smartFailoverRefusedCodes": "Проверка сервиса вернула HTTP {codes}. Это отказ в доступе, а не таймаут сети.",
   "smartFailoverStatusError": "Не удалось получить состояние ядра. Проверьте запуск VPN.",
   "smartFailoverDirect": "Прямой режим не использует автоматический выбор. Включите режим правил или глобальный режим.",
