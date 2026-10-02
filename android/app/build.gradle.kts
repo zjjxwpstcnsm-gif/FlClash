@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.File
 import java.util.Properties
 
 plugins {
@@ -14,6 +15,7 @@ val localProperties = Properties().apply {
 }
 
 val releaseStoreFile = file("keystore.jks")
+val developmentStoreFile = File(System.getProperty("user.home"), ".android/debug.keystore")
 val releaseStorePassword = localProperties.getProperty("storePassword")
 val releaseKeyAlias = localProperties.getProperty("keyAlias")
 val releaseKeyPassword = localProperties.getProperty("keyPassword")
@@ -41,6 +43,9 @@ android {
     }
 
     signingConfigs {
+        if (developmentStoreFile.exists()) {
+            getByName("debug").storeFile = developmentStoreFile
+        }
         if (hasReleaseSigning) {
             create("release") {
                 storeFile = releaseStoreFile

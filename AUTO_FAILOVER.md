@@ -46,7 +46,7 @@ HTTP 探测通过表示该域名和出口可达，不保证 ChatGPT 登录、账
 
 工作流使用 Flutter 3.44.4、Go 1.26.4、JDK 17、Android NDK r28c。每个 APK 附带 SHA-256 校验和，发布标签对应生成代码后的源码提交。
 
-当前无专用发布密钥时，沿用上游的 release 构建加 debug 签名回退，包名为 `com.follow.clash.autofailover.dev`。这是测试分发包，不适合商店发布；工作流缓存开发签名以复用到后续构建，但缓存失效仍可能导致签名变化。旧预览版未保留签名，若无法覆盖安装，请先导出配置再卸载旧测试包。正式长期分发应使用自己保存的固定 keystore，按 `android/app/build.gradle.kts` 的签名字段配置。
+当前无专用发布密钥时，沿用上游的 release 构建加 debug 签名回退，包名为 `com.follow.clash.autofailover.dev`。这是测试分发包，不适合商店发布；工作流在固定路径生成并缓存开发签名，Gradle 显式使用该文件，避免默认签名位置变化使缓存落空。但缓存失效仍可能导致签名变化。旧预览版未保留签名，若无法覆盖安装，请先导出配置再卸载旧测试包。正式长期分发应使用自己保存的固定 keystore，按 `android/app/build.gradle.kts` 的签名字段配置。
 
 本 fork 未配置上游 Firebase 项目，崩溃统计在没有 Firebase 配置时安全跳过。自动检查更新默认关闭，避免安装上游版本覆盖定制功能。
 
