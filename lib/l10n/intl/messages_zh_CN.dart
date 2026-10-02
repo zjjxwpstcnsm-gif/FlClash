@@ -69,11 +69,23 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m23(count) => "已选择 ${count} 项";
 
-  static String m24(limit) => "达到或超过 ${limit} ms 的节点视为不可用；开启自动切换后生效。";
+  static String m24(count) => "正在检测 ${count} 个非香港节点…";
 
-  static String m25(label) => "${label}必须为URL";
+  static String m25(tested, slow, refused, timeouts, regions) =>
+      "已测 ${tested} · 超标 ${slow} · 拒绝 ${refused} · 连接失败/超时 ${timeouts} · 出口排除/未知 ${regions}";
 
-  static String m26(count) => "${count} 年前";
+  static String m26(limit) => "达到或超过 ${limit} ms 的节点视为不可用；开启自动切换后生效。";
+
+  static String m27(node, delay) => "已连接：${node} · ${delay} ms";
+
+  static String m28(codes) => "服务探测返回 HTTP ${codes}，属于访问被拒绝，并非网络超时。";
+
+  static String m29(count, limit) =>
+      "${count} 个候选中暂无延迟低于 ${limit} ms 的可用节点，后台继续检测恢复。";
+
+  static String m30(label) => "${label}必须为URL";
+
+  static String m31(count) => "${count} 年前";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -664,14 +676,33 @@ class MessageLookup extends MessageLookupByLibrary {
     "silentLaunchDesc": MessageLookupByLibrary.simpleMessage("后台启动"),
     "size": MessageLookupByLibrary.simpleMessage("尺寸"),
     "smartFailover": MessageLookupByLibrary.simpleMessage("自动切换节点"),
+    "smartFailoverCheckNow": MessageLookupByLibrary.simpleMessage("立即检测"),
+    "smartFailoverChecking": m24,
     "smartFailoverDesc": MessageLookupByLibrary.simpleMessage(
-      "每 5 秒检测当前节点，优选可连通 ChatGPT 域名的非香港低延迟出口；3 秒超时后自动切换，后台持续运行。作用于规则/全局模式中的代理流量。",
+      "每 5 秒检测当前非香港节点，失效后自动切换；延迟阈值不包含首次拨号和 TLS 握手，单次探测最多 5 秒。核心后台运行，作用于规则/全局模式的代理流量。",
+    ),
+    "smartFailoverDiagnostics": m25,
+    "smartFailoverDirect": MessageLookupByLibrary.simpleMessage(
+      "当前为直连模式，请切到规则或全局模式以启用自动选点。",
+    ),
+    "smartFailoverEmpty": MessageLookupByLibrary.simpleMessage(
+      "没有找到非香港节点，请检查订阅内容。",
     ),
     "smartFailoverLatencyRange": MessageLookupByLibrary.simpleMessage(
       "请输入 50–3000 之间的整数，单位 ms。",
     ),
     "smartFailoverMaxDelay": MessageLookupByLibrary.simpleMessage("最大可用延迟"),
-    "smartFailoverMaxDelayDesc": m24,
+    "smartFailoverMaxDelayDesc": m26,
+    "smartFailoverReady": m27,
+    "smartFailoverRefusedCodes": m28,
+    "smartFailoverStatus": MessageLookupByLibrary.simpleMessage("自动切换状态"),
+    "smartFailoverStatusError": MessageLookupByLibrary.simpleMessage(
+      "无法读取核心状态，请检查 VPN 是否启动成功。",
+    ),
+    "smartFailoverStopped": MessageLookupByLibrary.simpleMessage(
+      "启动 VPN 后开始自动检测。",
+    ),
+    "smartFailoverUnavailable": m29,
     "socksPort": MessageLookupByLibrary.simpleMessage("Socks端口"),
     "sort": MessageLookupByLibrary.simpleMessage("排序"),
     "source": MessageLookupByLibrary.simpleMessage("来源"),
@@ -741,7 +772,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "upload": MessageLookupByLibrary.simpleMessage("上传"),
     "url": MessageLookupByLibrary.simpleMessage("URL"),
     "urlDesc": MessageLookupByLibrary.simpleMessage("通过URL获取配置文件"),
-    "urlTip": m25,
+    "urlTip": m30,
     "useHosts": MessageLookupByLibrary.simpleMessage("使用Hosts"),
     "useSystemHosts": MessageLookupByLibrary.simpleMessage("使用系统Hosts"),
     "userAgent": MessageLookupByLibrary.simpleMessage("用户代理"),
@@ -757,7 +788,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vpnTip": MessageLookupByLibrary.simpleMessage("重启VPN后改变生效"),
     "webDAVConfiguration": MessageLookupByLibrary.simpleMessage("WebDAV配置"),
     "whitelistMode": MessageLookupByLibrary.simpleMessage("白名单模式"),
-    "yearsAgo": m26,
+    "yearsAgo": m31,
     "zh_CN": MessageLookupByLibrary.simpleMessage("中文简体"),
   };
 }

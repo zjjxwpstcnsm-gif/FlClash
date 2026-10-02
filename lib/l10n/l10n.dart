@@ -4534,10 +4534,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.`
+  /// `Checks the current non-Hong Kong node every 5 seconds; failed nodes switch automatically. Startup/TLS time is excluded from the latency limit; each probe has a 5-second timeout. Runs in the core in Rule/Global mode.`
   String get smartFailoverDesc {
     return Intl.message(
-      'Check the current node every 5 seconds. Prefer fast non-Hong Kong exits reachable through ChatGPT. Reconnect after a 3-second timeout; continue in the background. Applies to proxy traffic in rule/global mode.',
+      'Checks the current non-Hong Kong node every 5 seconds; failed nodes switch automatically. Startup/TLS time is excluded from the latency limit; each probe has a 5-second timeout. Runs in the core in Rule/Global mode.',
       name: 'smartFailoverDesc',
       desc: '',
       args: [],
@@ -4569,6 +4569,122 @@ class AppLocalizations {
     return Intl.message(
       'Enter a whole number from 50 to 3000 ms.',
       name: 'smartFailoverLatencyRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Automatic failover status`
+  String get smartFailoverStatus {
+    return Intl.message(
+      'Automatic failover status',
+      name: 'smartFailoverStatus',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check now`
+  String get smartFailoverCheckNow {
+    return Intl.message(
+      'Check now',
+      name: 'smartFailoverCheckNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connected: {node} · {delay} ms`
+  String smartFailoverReady(String node, int delay) {
+    return Intl.message(
+      'Connected: $node · $delay ms',
+      name: 'smartFailoverReady',
+      desc: '',
+      args: [node, delay],
+    );
+  }
+
+  /// `Checking {count} non-Hong Kong nodes…`
+  String smartFailoverChecking(int count) {
+    return Intl.message(
+      'Checking $count non-Hong Kong nodes…',
+      name: 'smartFailoverChecking',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Start the VPN to begin automatic checks.`
+  String get smartFailoverStopped {
+    return Intl.message(
+      'Start the VPN to begin automatic checks.',
+      name: 'smartFailoverStopped',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No non-Hong Kong nodes found. Check your subscription.`
+  String get smartFailoverEmpty {
+    return Intl.message(
+      'No non-Hong Kong nodes found. Check your subscription.',
+      name: 'smartFailoverEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Among {count} candidates, no usable node is below {limit} ms; recovery checks continue.`
+  String smartFailoverUnavailable(int count, int limit) {
+    return Intl.message(
+      'Among $count candidates, no usable node is below $limit ms; recovery checks continue.',
+      name: 'smartFailoverUnavailable',
+      desc: '',
+      args: [count, limit],
+    );
+  }
+
+  /// `Tested {tested} · Over limit {slow} · Refused {refused} · Network/timeout {timeouts} · Exit excluded/unknown {regions}`
+  String smartFailoverDiagnostics(
+    int tested,
+    int slow,
+    int refused,
+    int timeouts,
+    int regions,
+  ) {
+    return Intl.message(
+      'Tested $tested · Over limit $slow · Refused $refused · Network/timeout $timeouts · Exit excluded/unknown $regions',
+      name: 'smartFailoverDiagnostics',
+      desc: '',
+      args: [tested, slow, refused, timeouts, regions],
+    );
+  }
+
+  /// `Service probe returned HTTP {codes}. This is an access refusal, not a network timeout.`
+  String smartFailoverRefusedCodes(String codes) {
+    return Intl.message(
+      'Service probe returned HTTP $codes. This is an access refusal, not a network timeout.',
+      name: 'smartFailoverRefusedCodes',
+      desc: '',
+      args: [codes],
+    );
+  }
+
+  /// `Cannot read the core status. Check whether the VPN started successfully.`
+  String get smartFailoverStatusError {
+    return Intl.message(
+      'Cannot read the core status. Check whether the VPN started successfully.',
+      name: 'smartFailoverStatusError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Direct mode bypasses automatic selection. Switch to Rule or Global mode.`
+  String get smartFailoverDirect {
+    return Intl.message(
+      'Direct mode bypasses automatic selection. Switch to Rule or Global mode.',
+      name: 'smartFailoverDirect',
       desc: '',
       args: [],
     );
